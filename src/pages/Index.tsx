@@ -1,12 +1,51 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { Navbar } from "@/components/Navbar";
+import { HeroSection } from "@/components/HeroSection";
+import { FeatureSelector } from "@/components/FeatureSelector";
+import { TrustedBySection } from "@/components/TrustedBySection";
+import { BenefitsSection } from "@/components/BenefitsSection";
+import { MobileAppSection } from "@/components/MobileAppSection";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { TipsSection } from "@/components/TipsSection";
+import { FAQSection } from "@/components/FAQSection";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      {/* 1. Header / Navbar */}
+      <Navbar isLoggedIn={isLoggedIn} onLoginToggle={() => setIsLoggedIn(!isLoggedIn)} />
+
+      <main>
+        {/* 2. Hero Section */}
+        <HeroSection />
+
+        {/* 3 & 4. Feature Selector & Detail (Tabs) */}
+        <FeatureSelector />
+
+        {/* 5. Trusted By Section */}
+        <TrustedBySection />
+
+        {/* 6. Benefits Section */}
+        <BenefitsSection />
+
+        {/* 7. Mobile App Section */}
+        <MobileAppSection />
+
+        {/* 8. Testimonials Section */}
+        <TestimonialsSection />
+
+        {/* 9. Tips Section */}
+        <TipsSection />
+
+        {/* 10. FAQ Section */}
+        <FAQSection />
+      </main>
+
+      {/* 11. Footer */}
+      <Footer />
     </div>
   );
 };
