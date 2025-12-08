@@ -1,13 +1,37 @@
 export function TrustedBySection() {
   const companies = [
-    "TechnoCorp",
-    "Nusantara Bank",
-    "Sejahtera Group",
-    "Digital Nusa",
-    "Inovasi Media",
-    "Karya Prima",
-    "Maju Bersama",
-    "Solusi Teknologi",
+    {
+      name: "Google",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/200px-Google_2015_logo.svg.png",
+    },
+    {
+      name: "Microsoft",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/200px-Microsoft_logo_%282012%29.svg.png",
+    },
+    {
+      name: "Amazon",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/200px-Amazon_logo.svg.png",
+    },
+    {
+      name: "Meta",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/200px-Meta_Platforms_Inc._logo.svg.png",
+    },
+    {
+      name: "Apple",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/100px-Apple_logo_black.svg.png",
+    },
+    {
+      name: "Netflix",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/200px-Netflix_2015_logo.svg.png",
+    },
+    {
+      name: "Spotify",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Spotify_logo_with_text.svg/200px-Spotify_logo_with_text.svg.png",
+    },
+    {
+      name: "Airbnb",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/200px-Airbnb_Logo_B%C3%A9lo.svg.png",
+    },
   ];
 
   return (
@@ -20,11 +44,13 @@ export function TrustedBySection() {
           {companies.map((company, index) => (
             <div
               key={index}
-              className="flex items-center justify-center h-12"
+              className="flex items-center justify-center h-12 grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"
             >
-              <div className="px-4 py-2 rounded-lg bg-card border border-border/50">
-                <span className="text-sm font-semibold text-muted-foreground/70">{company}</span>
-              </div>
+              <img
+                src={company.logo}
+                alt={`Logo ${company.name}`}
+                className="max-h-8 w-auto object-contain"
+              />
             </div>
           ))}
         </div>
