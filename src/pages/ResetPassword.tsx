@@ -127,7 +127,7 @@ const ResetPassword = () => {
               className="w-full h-12 text-base font-semibold" 
               asChild
             >
-              <Link to="/masuk">
+              <Link to="/auth/login">
                 Masuk ke Akun
               </Link>
             </Button>

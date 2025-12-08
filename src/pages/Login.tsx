@@ -86,7 +86,7 @@ const Login = () => {
                   Password
                 </label>
                 <Link 
-                  to="/lupa-password" 
+                  to="/auth/forgot-password" 
                   className="text-sm text-primary hover:underline"
                 >
                   Lupa password?
@@ -118,7 +118,7 @@ const Login = () => {
 
           <p className="text-center text-sm text-muted-foreground">
             Belum punya akun?{" "}
-            <Link to="/daftar" className="text-primary font-medium hover:underline">
+            <Link to="/auth/register" className="text-primary font-medium hover:underline">
               Daftar sekarang
             </Link>
           </p>

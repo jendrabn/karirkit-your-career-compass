@@ -113,10 +113,12 @@ export function Navbar({ isLoggedIn = false, onLoginToggle }: NavbarProps) {
             </DropdownMenu>
           ) : (
             <>
-              <Button variant="outline" onClick={onLoginToggle}>
-                Masuk
+              <Button variant="outline" asChild>
+                <a href="/auth/login">Masuk</a>
               </Button>
-              <Button variant="default">Daftar</Button>
+              <Button variant="default" asChild>
+                <a href="/auth/register">Daftar</a>
+              </Button>
             </>
           )}
         </div>
@@ -155,11 +157,11 @@ export function Navbar({ isLoggedIn = false, onLoginToggle }: NavbarProps) {
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline" className="flex-1" onClick={onLoginToggle}>
-                    Masuk
+                  <Button variant="outline" className="flex-1" asChild>
+                    <a href="/auth/login">Masuk</a>
                   </Button>
-                  <Button variant="default" className="flex-1">
-                    Daftar
+                  <Button variant="default" className="flex-1" asChild>
+                    <a href="/auth/register">Daftar</a>
                   </Button>
                 </>
               )}
