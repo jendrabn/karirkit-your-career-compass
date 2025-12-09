@@ -47,7 +47,7 @@ export function TipsSection() {
                   {article.description}
                 </p>
                 <a
-                  href="#"
+                  href="/blog"
                   className="inline-flex items-center gap-1 text-sm text-primary font-medium hover:underline"
                 >
                   Baca selengkapnya

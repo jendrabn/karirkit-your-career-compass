@@ -4,7 +4,7 @@ import { HeroSection } from "@/components/HeroSection";
 import { FeatureSelector } from "@/components/FeatureSelector";
 import { TrustedBySection } from "@/components/TrustedBySection";
 import { BenefitsSection } from "@/components/BenefitsSection";
-import { MobileAppSection } from "@/components/MobileAppSection";
+import { CTASection } from "@/components/CTASection";
 import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { TipsSection } from "@/components/TipsSection";
 import { FAQSection } from "@/components/FAQSection";
@@ -31,8 +31,8 @@ const Index = () => {
         {/* 6. Benefits Section */}
         <BenefitsSection />
 
-        {/* 7. Mobile App Section */}
-        <MobileAppSection />
+        {/* 7. CTA Section */}
+        <CTASection />
 
         {/* 8. Testimonials Section */}
         <TestimonialsSection />
