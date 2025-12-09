@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
-import logo from "@/assets/karirkit-logo.png";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -24,29 +23,24 @@ const ResetPassword = () => {
       <Navbar />
       <div className="flex-1 bg-gradient-to-br from-primary/5 via-background to-primary/10 flex items-center justify-center p-4 py-12">
         <Card className="w-full max-w-md shadow-xl border-border/50">
-          <CardHeader className="text-center space-y-4">
-            <Link to="/" className="flex items-center justify-center gap-2">
-              <img src={logo} alt="KarirKit" className="h-10 w-10" />
-              <span className="text-2xl font-bold text-primary">KarirKit</span>
-            </Link>
-            
+          <CardHeader className="text-center space-y-2">
             {!success ? (
-              <div>
+              <>
                 <CardTitle className="text-2xl">Reset Password</CardTitle>
-                <CardDescription className="mt-2">
+                <CardDescription>
                   Buat password baru untuk akun Anda
                 </CardDescription>
-              </div>
+              </>
             ) : (
-              <div>
+              <>
                 <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle2 className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="text-2xl">Password Berhasil Diubah</CardTitle>
-                <CardDescription className="mt-2">
+                <CardDescription>
                   Password Anda telah berhasil diperbarui. Silakan masuk dengan password baru Anda.
                 </CardDescription>
-              </div>
+              </>
             )}
           </CardHeader>
           <CardContent className="space-y-6">
