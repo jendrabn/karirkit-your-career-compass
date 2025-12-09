@@ -21,6 +21,7 @@ const navLinks = [
   { href: "#surat-lamaran", label: "Surat Lamaran" },
   { href: "#cv", label: "CV" },
   { href: "#portofolio", label: "Portofolio" },
+  { href: "/blog", label: "Blog" },
 ];
 
 interface NavbarProps {
