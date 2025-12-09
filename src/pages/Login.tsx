@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff } from "lucide-react";
-import logo from "@/assets/karirkit-logo.png";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
@@ -19,17 +18,11 @@ const Login = () => {
       <Navbar />
       <div className="flex-1 bg-gradient-to-br from-primary/5 via-background to-primary/10 flex items-center justify-center p-4 py-12">
         <Card className="w-full max-w-md shadow-xl border-border/50">
-          <CardHeader className="text-center space-y-4">
-            <Link to="/" className="flex items-center justify-center gap-2">
-              <img src={logo} alt="KarirKit" className="h-10 w-10" />
-              <span className="text-2xl font-bold text-primary">KarirKit</span>
-            </Link>
-            <div>
-              <CardTitle className="text-2xl">Masuk ke Akun Anda</CardTitle>
-              <CardDescription className="mt-2">
-                Masukkan email atau username dan password Anda
-              </CardDescription>
-            </div>
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-2xl">Masuk ke Akun Anda</CardTitle>
+            <CardDescription>
+              Masukkan email atau username dan password Anda
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Google Login Button */}

@@ -90,14 +90,14 @@ export function FeatureSelector() {
               <TabsTrigger
                 key={feature.id}
                 value={feature.id}
-                className="group data-[state=active]:bg-secondary data-[state=active]:border-primary data-[state=active]:shadow-lg border-2 border-transparent bg-card rounded-2xl p-6 h-auto flex flex-col items-center text-center gap-3 transition-all hover:border-primary/30 hover:shadow-md"
+                className="group data-[state=active]:bg-secondary data-[state=active]:border-primary data-[state=active]:shadow-lg border-2 border-transparent bg-card rounded-2xl p-4 sm:p-6 h-auto flex flex-col items-center text-center gap-2 sm:gap-3 transition-all hover:border-primary/30 hover:shadow-md"
               >
-                <div className="w-14 h-14 rounded-xl bg-secondary group-data-[state=active]:bg-primary/20 flex items-center justify-center transition-colors">
-                  <feature.icon className="w-7 h-7 text-primary" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-secondary group-data-[state=active]:bg-primary/20 flex items-center justify-center transition-colors">
+                  <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">{feature.title}</h3>
-                  <p className="text-xs text-muted-foreground mt-1 hidden sm:block">{feature.subtitle}</p>
+                <div className="w-full overflow-hidden">
+                  <h3 className="font-semibold text-foreground text-sm sm:text-base truncate">{feature.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-1 hidden sm:block line-clamp-2">{feature.subtitle}</p>
                 </div>
               </TabsTrigger>
             ))}

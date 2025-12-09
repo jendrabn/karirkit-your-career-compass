@@ -17,20 +17,20 @@ export function TrustedBySection() {
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/200px-Meta_Platforms_Inc._logo.svg.png",
     },
     {
-      name: "Apple",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/100px-Apple_logo_black.svg.png",
+      name: "Gojek",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Gojek_logo_2019.svg/200px-Gojek_logo_2019.svg.png",
     },
     {
-      name: "Netflix",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/200px-Netflix_2015_logo.svg.png",
+      name: "Tokopedia",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Tokopedia.svg/200px-Tokopedia.svg.png",
     },
     {
-      name: "Spotify",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Spotify_logo_with_text.svg/200px-Spotify_logo_with_text.svg.png",
+      name: "Shopee",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/200px-Shopee.svg.png",
     },
     {
-      name: "Airbnb",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/200px-Airbnb_Logo_B%C3%A9lo.svg.png",
+      name: "Bukalapak",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Bukalapak-logo.svg/200px-Bukalapak-logo.svg.png",
     },
   ];
 
