@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="bg-foreground text-background py-12 lg:py-16">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pb-8">
           {/* KarirKit Column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
@@ -108,7 +108,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-background/10">
+        <div className="py-8 border-t border-background/10">
           <p className="text-sm text-background/60 text-center">
             © {currentYear} KarirKit. Semua hak dilindungi.
           </p>
