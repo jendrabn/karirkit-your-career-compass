@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, RefreshCw, Bell, TrendingUp, Calendar, CheckCircle } from "lucide-react";
+import { Clock, RefreshCw, Bell, Users, FileText, Send, LayoutTemplate } from "lucide-react";
 
 export function BenefitsSection() {
   return (
@@ -31,45 +31,52 @@ export function BenefitsSection() {
             </div>
           </div>
 
-          {/* Right Content - Stats Mockup */}
+          {/* Right Content - Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <Card className="p-5 rounded-2xl card-shadow bg-card col-span-2">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold">Statistik Lamaran</h3>
-                <Badge variant="secondary">Minggu Ini</Badge>
-              </div>
-              <div className="flex items-end gap-2 h-24">
-                {[40, 65, 45, 80, 55, 70, 90].map((height, i) => (
-                  <div key={i} className="flex-1 bg-primary/20 rounded-t" style={{ height: `${height}%` }}>
-                    <div 
-                      className="w-full bg-primary rounded-t transition-all"
-                      style={{ height: `${Math.random() * 50 + 50}%` }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Card>
-
             <Card className="p-5 rounded-2xl card-shadow bg-card">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-primary" />
+                  <Users className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-primary">24</p>
-                  <p className="text-xs text-muted-foreground">Total Lamaran</p>
+                  <p className="text-2xl font-bold text-primary">1,250+</p>
+                  <p className="text-xs text-muted-foreground">Pengguna Aktif</p>
                 </div>
               </div>
             </Card>
 
             <Card className="p-5 rounded-2xl card-shadow bg-card">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-amber-600" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-amber-600">5</p>
-                  <p className="text-xs text-muted-foreground">Interview</p>
+                  <p className="text-2xl font-bold text-primary">3,400+</p>
+                  <p className="text-xs text-muted-foreground">CV Dibuat</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-5 rounded-2xl card-shadow bg-card">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                  <Send className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-amber-600">2,100+</p>
+                  <p className="text-xs text-muted-foreground">Surat Lamaran</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-5 rounded-2xl card-shadow bg-card">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <LayoutTemplate className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-primary">50+</p>
+                  <p className="text-xs text-muted-foreground">Template Tersedia</p>
                 </div>
               </div>
             </Card>
@@ -81,11 +88,11 @@ export function BenefitsSection() {
                     <Bell className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">Pengingat Aktif</p>
-                    <p className="text-xs text-muted-foreground">Follow up TechnoCorp besok</p>
+                    <p className="font-medium text-sm">Total Lamaran Terkirim</p>
+                    <p className="text-xs text-muted-foreground">5,800+ lamaran telah diajukan</p>
                   </div>
                 </div>
-                <CheckCircle className="w-5 h-5 text-primary" />
+                <Badge variant="secondary">Aktif</Badge>
               </div>
             </Card>
           </div>
