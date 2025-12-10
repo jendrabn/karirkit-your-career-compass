@@ -47,7 +47,7 @@ const featureDetails = {
     bullets: [
       "Template siap pakai untuk berbagai jenis pekerjaan",
       "Data otomatis terisi dari profil dan CV",
-      "Ekspor ke PDF dalam sekali klik",
+      "Ekspor ke Word (.docx) — ekspor PDF segera hadir",
     ],
     cta: "Pelajari cara membuat Surat Lamaran",
     image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&h=500&fit=crop",
@@ -59,10 +59,10 @@ const featureDetails = {
     bullets: [
       "Template CV modern dan mudah dibaca",
       "Bagian-bagian yang sudah terstruktur (pengalaman, pendidikan, skill)",
-      "Ekspor ke PDF dan bagikan link online",
+      "Ekspor ke Word (.docx) — ekspor PDF segera hadir",
     ],
     cta: "Pelajari cara membuat CV",
-    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&h=500&fit=crop",
+    image: "https://images.unsplash.com/photos/1517048676732-d65bc937f952?w=800&h=500&fit=crop",
     imageAlt: "CV Builder Interface",
   },
   portofolio: {

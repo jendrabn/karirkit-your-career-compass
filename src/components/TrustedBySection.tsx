@@ -17,20 +17,20 @@ export function TrustedBySection() {
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/200px-Meta_Platforms_Inc._logo.svg.png",
     },
     {
-      name: "Gojek",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Gojek_logo_2019.svg/200px-Gojek_logo_2019.svg.png",
+      name: "Apple",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/100px-Apple_logo_black.svg.png",
     },
     {
-      name: "Tokopedia",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Tokopedia.svg/200px-Tokopedia.svg.png",
+      name: "Netflix",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/200px-Netflix_2015_logo.svg.png",
     },
     {
-      name: "Shopee",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/200px-Shopee.svg.png",
+      name: "Spotify",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/100px-Spotify_logo_without_text.svg.png",
     },
     {
-      name: "Bukalapak",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Bukalapak-logo.svg/200px-Bukalapak-logo.svg.png",
+      name: "Uber",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Uber_logo_2018.svg/200px-Uber_logo_2018.svg.png",
     },
   ];
 

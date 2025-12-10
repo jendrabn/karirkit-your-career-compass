@@ -5,22 +5,22 @@ const articles = [
   {
     title: "Contoh CV untuk Fresh Graduate",
     description: "Pelajari cara membuat CV yang menarik perhatian HRD meski belum punya pengalaman kerja.",
-    color: "from-blue-400 to-blue-600",
+    image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&h=500&fit=crop",
   },
   {
     title: "Cara Menulis Surat Lamaran yang Menarik",
     description: "Tips menulis surat lamaran yang profesional dan membuat recruiter tertarik membaca CV Anda.",
-    color: "from-emerald-400 to-emerald-600",
+    image: "https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=800&h=500&fit=crop",
   },
   {
     title: "Tips Membuat Portofolio Online",
     description: "Panduan lengkap membangun portofolio digital yang memukau untuk berbagai bidang profesi.",
-    color: "from-purple-400 to-purple-600",
+    image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&h=500&fit=crop",
   },
   {
     title: "Strategi Mengelola Banyak Lamaran Kerja",
     description: "Cara efektif melacak dan mengelola puluhan lamaran kerja tanpa kehilangan jejak.",
-    color: "from-amber-400 to-amber-600",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop",
   },
 ];
 
@@ -38,7 +38,13 @@ export function TipsSection() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {articles.map((article, index) => (
             <Card key={index} className="overflow-hidden rounded-2xl card-shadow bg-card hover:card-shadow-hover transition-all group cursor-pointer">
-              <div className={`h-32 bg-gradient-to-br ${article.color}`} />
+              <div className="aspect-video overflow-hidden">
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
               <div className="p-5">
                 <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                   {article.title}
