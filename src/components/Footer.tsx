@@ -108,7 +108,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="py-8 border-t border-background/10">
+        <div className="pt-8 border-t border-background/10">
           <p className="text-sm text-background/60 text-center">
             © {currentYear} KarirKit. Semua hak dilindungi.
           </p>
