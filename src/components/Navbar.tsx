@@ -12,7 +12,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Menu, X, LogOut, User, Home, FileText, Briefcase, FolderOpen, Globe, Heart } from "lucide-react";
+import { ChevronDown, Menu, X, LogOut, User, Home, FileText, Briefcase, FolderOpen, Globe } from "lucide-react";
 import logo from "@/assets/karirkit-logo.png";
 import { DonationModal } from "./DonationModal";
 
@@ -56,9 +56,8 @@ export function Navbar({ isLoggedIn = false, onLoginToggle }: NavbarProps) {
             ))}
             <button
               onClick={() => setDonationModalOpen(true)}
-              className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
             >
-              <Heart className="w-4 h-4" />
               Donasi
             </button>
           </nav>
@@ -166,9 +165,8 @@ export function Navbar({ isLoggedIn = false, onLoginToggle }: NavbarProps) {
                   setMobileMenuOpen(false);
                   setDonationModalOpen(true);
                 }}
-                className="text-sm font-medium text-primary hover:text-primary/80 py-2 flex items-center gap-1 text-left"
+                className="text-sm font-medium text-muted-foreground hover:text-primary py-2 text-left"
               >
-                <Heart className="w-4 h-4" />
                 Donasi
               </button>
               <div className="flex gap-3 pt-4 border-t border-border">

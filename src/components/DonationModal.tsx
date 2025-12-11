@@ -6,7 +6,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Heart, Server, Wrench, Code } from "lucide-react";
+import { Server, Wrench, Code } from "lucide-react";
 
 interface DonationModalProps {
   open: boolean;
@@ -23,9 +23,6 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-center space-y-3">
-          <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-            <Heart className="w-7 h-7 text-primary" />
-          </div>
           <DialogTitle className="text-xl">Dukung Operasional KarirKit</DialogTitle>
           <DialogDescription className="text-left text-base leading-relaxed">
             KarirKit berjalan tanpa iklan dan tanpa paywall—semua demi memberikan akses mudah bagi setiap pencari kerja. Agar layanan ini tetap hidup dan terus berkembang, kami membutuhkan dukungan Anda.
@@ -61,7 +58,6 @@ export function DonationModal({ open, onOpenChange }: DonationModalProps) {
 
         <div className="flex flex-col gap-3 pt-2">
           <Button onClick={handleDonate} className="w-full" size="lg">
-            <Heart className="w-4 h-4 mr-2" />
             Donasi via Saweria
           </Button>
           <Button 
