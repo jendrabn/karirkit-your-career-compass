@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -16,7 +15,6 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [agreed, setAgreed] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -142,25 +140,17 @@ const Register = () => {
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3">
-                <Checkbox 
-                  id="terms" 
-                  checked={agreed}
-                  onCheckedChange={(checked) => setAgreed(checked as boolean)}
-                  className="mt-0.5"
-                />
-                <label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
-                  Saya menyetujui{" "}
-                  <Link to="/syarat-ketentuan" className="text-primary hover:underline">
-                    Syarat & Ketentuan
-                  </Link>{" "}
-                  dan{" "}
-                  <Link to="/kebijakan-privasi" className="text-primary hover:underline">
-                    Kebijakan Privasi
-                  </Link>{" "}
-                  KarirKit
-                </label>
-              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Dengan mendaftar, Anda menyetujui{" "}
+                <Link to="/syarat-ketentuan" className="text-primary hover:underline">
+                  Syarat & Ketentuan
+                </Link>{" "}
+                dan{" "}
+                <Link to="/kebijakan-privasi" className="text-primary hover:underline">
+                  Kebijakan Privasi
+                </Link>{" "}
+                KarirKit
+              </p>
             </div>
 
             <Button className="w-full h-12 text-base font-semibold" onClick={() => {}}>
