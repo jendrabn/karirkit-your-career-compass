@@ -40,6 +40,7 @@ const featureDetails = {
     cta: "Pelajari cara kerja Application Tracker",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop",
     imageAlt: "Application Tracker Dashboard",
+    bgColor: "bg-secondary",
   },
   surat: {
     title: "Buat Surat Lamaran yang Meyakinkan",
@@ -52,6 +53,7 @@ const featureDetails = {
     cta: "Pelajari cara membuat Surat Lamaran",
     image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&h=500&fit=crop",
     imageAlt: "Editor Surat Lamaran",
+    bgColor: "bg-primary/5",
   },
   cv: {
     title: "CV Modern yang Menonjol di Mata Rekruter",
@@ -64,6 +66,7 @@ const featureDetails = {
     cta: "Pelajari cara membuat CV",
     image: "https://images.unsplash.com/photos/1517048676732-d65bc937f952?w=800&h=500&fit=crop",
     imageAlt: "CV Builder Interface",
+    bgColor: "bg-accent",
   },
   portofolio: {
     title: "Tunjukkan Keahlian Anda dengan Portofolio Digital",
@@ -76,6 +79,7 @@ const featureDetails = {
     cta: "Pelajari cara membuat Portofolio",
     image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&h=500&fit=crop",
     imageAlt: "Portfolio Gallery",
+    bgColor: "bg-muted",
   },
 };
 
@@ -113,6 +117,7 @@ export function FeatureSelector() {
                 cta={detail.cta}
                 image={detail.image}
                 imageAlt={detail.imageAlt}
+                bgColor={detail.bgColor}
               />
             </TabsContent>
           ))}
@@ -129,11 +134,12 @@ interface FeatureDetailProps {
   cta: string;
   image: string;
   imageAlt: string;
+  bgColor: string;
 }
 
-function FeatureDetail({ title, description, bullets, cta, image, imageAlt }: FeatureDetailProps) {
+function FeatureDetail({ title, description, bullets, cta, image, imageAlt, bgColor }: FeatureDetailProps) {
   return (
-    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+    <div className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-center rounded-3xl p-8 lg:p-12 ${bgColor}`}>
       <div className="space-y-6">
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">{title}</h2>
         <p className="text-muted-foreground text-lg">{description}</p>
