@@ -47,10 +47,10 @@ const templates = [
 
 export function TemplateSliderSection() {
   return (
-    <section className="py-16 lg:py-24 bg-[hsl(230,70%,50%)]">
+    <section className="py-16 lg:py-24 bg-secondary">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-foreground mb-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4">
             Desain profesional, siap pakai untuk karir impianmu!
           </h2>
         </div>

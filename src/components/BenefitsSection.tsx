@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Clock, RefreshCw, Bell, Users, FileText, Send, LayoutTemplate } from "lucide-react";
 
 export function BenefitsSection() {
@@ -59,11 +58,11 @@ export function BenefitsSection() {
 
             <Card className="p-5 rounded-2xl card-shadow bg-card">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                  <Send className="w-5 h-5 text-amber-600" />
+                <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                  <Send className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-amber-600">2,100+</p>
+                  <p className="text-2xl font-bold text-primary">2,100+</p>
                   <p className="text-xs text-muted-foreground">Surat Lamaran</p>
                 </div>
               </div>
@@ -81,18 +80,15 @@ export function BenefitsSection() {
               </div>
             </Card>
 
-            <Card className="p-5 rounded-2xl card-shadow bg-card col-span-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-                    <Bell className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm">Total Lamaran Terkirim</p>
-                    <p className="text-xs text-muted-foreground">5,800+ lamaran telah diajukan</p>
-                  </div>
+            <Card className="p-5 rounded-2xl card-shadow bg-card">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                  <Bell className="w-5 h-5 text-primary" />
                 </div>
-                <Badge variant="secondary">Aktif</Badge>
+                <div>
+                  <p className="text-2xl font-bold text-primary">5,800+</p>
+                  <p className="text-xs text-muted-foreground">Lamaran Terkirim</p>
+                </div>
               </div>
             </Card>
           </div>
