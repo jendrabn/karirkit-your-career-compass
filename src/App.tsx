@@ -10,6 +10,11 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Blog from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
+import Dashboard from "./pages/Dashboard";
+import Applications from "./pages/Applications";
+import ApplicationCreate from "./pages/ApplicationCreate";
+import ApplicationEdit from "./pages/ApplicationEdit";
+import ApplicationShow from "./pages/ApplicationShow";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +33,11 @@ const App = () => (
           <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/applications" element={<Applications />} />
+          <Route path="/applications/create" element={<ApplicationCreate />} />
+          <Route path="/applications/:id/edit" element={<ApplicationEdit />} />
+          <Route path="/applications/:id" element={<ApplicationShow />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
