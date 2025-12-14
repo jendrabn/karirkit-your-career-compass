@@ -55,6 +55,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ApplicationFilterModal, FilterValues } from "@/components/applications/ApplicationFilterModal";
 import { ColumnToggle, ColumnVisibility, defaultColumnVisibility } from "@/components/applications/ColumnToggle";
+import { ApplicationStats } from "@/components/applications/ApplicationStats";
 import { mockApplications } from "@/data/mockApplications";
 import {
   Application,
@@ -139,6 +140,7 @@ export default function Applications() {
   const [applications, setApplications] = useState<Application[]>(mockApplications);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState<string | null>(null);
+  const [activeStatFilter, setActiveStatFilter] = useState<string | null>(null);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -155,6 +157,48 @@ export default function Applications() {
 
   const filteredAndSortedApplications = useMemo(() => {
     let result = [...applications];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Stat filters
+    if (activeStatFilter) {
+      switch (activeStatFilter) {
+        case "active":
+          result = result.filter(app => app.result_status === "pending");
+          break;
+        case "interview":
+          result = result.filter(app => app.status === "user_interview" || app.status === "final_interview");
+          break;
+        case "offer":
+          result = result.filter(app => 
+            app.status === "offering" || app.status === "mcu" || 
+            app.status === "onboarding" || app.status === "accepted"
+          );
+          break;
+        case "rejected":
+          result = result.filter(app => app.result_status === "failed");
+          break;
+        case "needFollowUp":
+          result = result.filter(app => {
+            if (!app.follow_up_date) return false;
+            const followUpDate = new Date(app.follow_up_date);
+            followUpDate.setHours(0, 0, 0, 0);
+            return followUpDate.getTime() === today.getTime();
+          });
+          break;
+        case "overdue":
+          result = result.filter(app => {
+            if (!app.follow_up_date) return false;
+            const followUpDate = new Date(app.follow_up_date);
+            followUpDate.setHours(0, 0, 0, 0);
+            return followUpDate.getTime() < today.getTime() && app.result_status === "pending";
+          });
+          break;
+        case "noFollowUp":
+          result = result.filter(app => !app.follow_up_date && app.result_status === "pending");
+          break;
+      }
+    }
 
     // Search
     if (searchQuery) {
@@ -202,7 +246,7 @@ export default function Applications() {
     }
 
     return result;
-  }, [applications, searchQuery, filters, sortField, sortOrder]);
+  }, [applications, searchQuery, filters, sortField, sortOrder, activeStatFilter]);
 
   const totalPages = Math.ceil(filteredAndSortedApplications.length / perPage);
   const paginatedApplications = filteredAndSortedApplications.slice(
@@ -229,6 +273,15 @@ export default function Applications() {
       setDeleteDialogOpen(false);
       setApplicationToDelete(null);
     }
+  };
+
+  const handleStatClick = (filter: string) => {
+    if (activeStatFilter === filter || filter === "total") {
+      setActiveStatFilter(null);
+    } else {
+      setActiveStatFilter(filter);
+    }
+    setCurrentPage(1);
   };
 
   const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
@@ -333,6 +386,13 @@ export default function Applications() {
         subtitle="Kelola dan pantau semua lamaran kerja Anda."
       />
 
+      {/* Stats Section */}
+      <ApplicationStats 
+        applications={applications} 
+        onStatClick={handleStatClick}
+        activeFilter={activeStatFilter || undefined}
+      />
+
       {/* Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div className="relative w-full md:w-auto md:min-w-[300px] max-w-sm">
@@ -346,6 +406,16 @@ export default function Applications() {
         </div>
 
         <div className="flex gap-2 flex-wrap">
+          {activeStatFilter && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setActiveStatFilter(null)}
+              className="text-muted-foreground"
+            >
+              Reset Filter
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={() => setFilterModalOpen(true)}>
             <Filter className="h-4 w-4 mr-2" />
             Filter

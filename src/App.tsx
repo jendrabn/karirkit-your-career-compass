@@ -28,6 +28,8 @@ import PortfolioCreate from "./pages/PortfolioCreate";
 import PortfolioEdit from "./pages/PortfolioEdit";
 import PortfolioList from "./pages/PortfolioList";
 import PortfolioDetail from "./pages/PortfolioDetail";
+import Profile from "./pages/Profile";
+import ChangePassword from "./pages/ChangePassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +66,8 @@ const App = () => (
           <Route path="/portfolios/:id/edit" element={<PortfolioEdit />} />
           <Route path="/me/:username" element={<PortfolioList />} />
           <Route path="/me/:username/:id" element={<PortfolioDetail />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/change-password" element={<ChangePassword />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
