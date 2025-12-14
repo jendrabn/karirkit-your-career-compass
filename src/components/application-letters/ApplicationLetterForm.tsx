@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, FileText } from "lucide-react";
+import { ParagraphTemplateModal } from "./ParagraphTemplateModal";
+import { ParagraphType } from "@/data/paragraphTemplates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -105,6 +108,34 @@ export function ApplicationLetterForm({
 
   const applicationDateValue = watch("application_date");
   const signatureValue = watch("signature");
+  const openingParagraphValue = watch("opening_paragraph");
+  const bodyParagraphValue = watch("body_paragraph");
+  const closingParagraphValue = watch("closing_paragraph");
+
+  const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  const [activeParagraphType, setActiveParagraphType] = useState<ParagraphType | null>(null);
+
+  const handleOpenTemplateModal = (type: ParagraphType) => {
+    setActiveParagraphType(type);
+    setTemplateModalOpen(true);
+  };
+
+  const handleSelectTemplate = (content: string) => {
+    if (activeParagraphType === "opening") {
+      setValue("opening_paragraph", content);
+    } else if (activeParagraphType === "body") {
+      setValue("body_paragraph", content);
+    } else if (activeParagraphType === "closing") {
+      setValue("closing_paragraph", content);
+    }
+  };
+
+  const getCurrentParagraphValue = () => {
+    if (activeParagraphType === "opening") return openingParagraphValue;
+    if (activeParagraphType === "body") return bodyParagraphValue;
+    if (activeParagraphType === "closing") return closingParagraphValue;
+    return "";
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -339,7 +370,18 @@ export function ApplicationLetterForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="opening_paragraph">Paragraf Pembuka *</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="opening_paragraph">Paragraf Pembuka *</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleOpenTemplateModal("opening")}
+              >
+                <FileText className="h-4 w-4 mr-1" />
+                Gunakan Template
+              </Button>
+            </div>
             <Textarea
               id="opening_paragraph"
               {...register("opening_paragraph")}
@@ -351,7 +393,18 @@ export function ApplicationLetterForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="body_paragraph">Paragraf Isi *</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="body_paragraph">Paragraf Isi *</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleOpenTemplateModal("body")}
+              >
+                <FileText className="h-4 w-4 mr-1" />
+                Gunakan Template
+              </Button>
+            </div>
             <Textarea
               id="body_paragraph"
               {...register("body_paragraph")}
@@ -372,7 +425,18 @@ export function ApplicationLetterForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="closing_paragraph">Paragraf Penutup *</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="closing_paragraph">Paragraf Penutup *</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleOpenTemplateModal("closing")}
+              >
+                <FileText className="h-4 w-4 mr-1" />
+                Gunakan Template
+              </Button>
+            </div>
             <Textarea
               id="closing_paragraph"
               {...register("closing_paragraph")}
@@ -398,6 +462,14 @@ export function ApplicationLetterForm({
           {isLoading ? "Menyimpan..." : "Simpan"}
         </Button>
       </div>
+
+      <ParagraphTemplateModal
+        open={templateModalOpen}
+        onOpenChange={setTemplateModalOpen}
+        paragraphType={activeParagraphType}
+        currentValue={getCurrentParagraphValue()}
+        onSelectTemplate={handleSelectTemplate}
+      />
     </form>
   );
 }
