@@ -9,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -58,6 +59,8 @@ const mockUser = {
 export function DashboardSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   const isActive = (path: string) => {
     if (path === "/applications") {
@@ -68,21 +71,30 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r">
-      <SidebarHeader className="border-b p-4 group-data-[state=collapsed]:p-2">
+      <SidebarHeader className={cn("border-b", isCollapsed ? "p-2" : "p-4")}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-muted transition-colors justify-start">
-              <Avatar className="h-10 w-10 shrink-0 group-data-[state=collapsed]:h-8 group-data-[state=collapsed]:w-8">
+            <button 
+              className={cn(
+                "flex items-center w-full rounded-lg hover:bg-muted transition-colors",
+                isCollapsed ? "justify-center p-2" : "gap-3 p-2"
+              )}
+            >
+              <Avatar className={cn("shrink-0", isCollapsed ? "h-8 w-8" : "h-10 w-10")}>
                 <AvatarImage src={mockUser.avatar} />
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {mockUser.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 text-left group-data-[state=collapsed]:hidden">
-                <p className="text-sm font-medium">{mockUser.name}</p>
-                <p className="text-xs text-muted-foreground">{mockUser.email}</p>
-              </div>
-              <ChevronDown className="h-4 w-4 text-muted-foreground group-data-[state=collapsed]:hidden" />
+              {!isCollapsed && (
+                <>
+                  <div className="flex-1 text-left min-w-0">
+                    <p className="text-sm font-medium truncate">{mockUser.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{mockUser.email}</p>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+                </>
+              )}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56 bg-popover z-50">
@@ -118,16 +130,17 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.url}
                       className={cn(
-                        "flex items-center gap-3 px-3 py-3 rounded-lg transition-colors justify-start",
+                        "flex items-center rounded-lg transition-colors",
+                        isCollapsed ? "justify-center px-2 py-3" : "gap-3 px-3 py-3",
                         isActive(item.url)
                           ? "bg-primary text-primary-foreground"
                           : "hover:bg-muted text-foreground"
                       )}
                     >
                       <item.icon className="h-5 w-5 shrink-0" />
-                      <span className="font-medium group-data-[state=collapsed]:hidden">
-                        {item.title}
-                      </span>
+                      {!isCollapsed && (
+                        <span className="font-medium">{item.title}</span>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
