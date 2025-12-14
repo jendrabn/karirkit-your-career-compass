@@ -275,8 +275,8 @@ export default function Applications() {
           value={currentValue}
           onValueChange={(val) => updateApplication(app.id, field, val)}
         >
-          <SelectTrigger className="h-auto w-auto min-w-[100px] border-0 bg-transparent p-0 shadow-none focus:ring-0">
-            <Badge variant={getBadgeVariant() as any} className="cursor-pointer">
+          <SelectTrigger className="h-auto w-full border-0 bg-transparent p-0 shadow-none focus:ring-0">
+            <Badge variant={getBadgeVariant() as any} className="cursor-pointer w-full justify-center text-center">
               {currentLabel}
             </Badge>
           </SelectTrigger>
