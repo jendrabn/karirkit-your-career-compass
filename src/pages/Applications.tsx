@@ -283,11 +283,11 @@ export default function Applications() {
       </div>
 
       {/* Table */}
-      <div className="border rounded-lg overflow-hidden">
+      <div className="bg-card border border-border/60 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 {columnVisibility.company_name && (
                   <TableHead><SortableHeader field="company_name">Perusahaan</SortableHeader></TableHead>
                 )}
@@ -323,21 +323,32 @@ export default function Applications() {
                 {columnVisibility.updated_at && (
                   <TableHead><SortableHeader field="updated_at">Diperbarui</SortableHeader></TableHead>
                 )}
-                <TableHead className="w-[100px]">Aksi</TableHead>
+                <TableHead className="w-[80px] text-center">Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedApplications.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={20} className="text-center py-10 text-muted-foreground">
-                    Tidak ada data lamaran
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={20} className="text-center py-16 text-muted-foreground">
+                    <div className="flex flex-col items-center gap-2">
+                      <Search className="h-10 w-10 text-muted-foreground/50" />
+                      <p className="text-base font-medium">Tidak ada data lamaran</p>
+                      <p className="text-sm">Mulai tambahkan lamaran pertama Anda</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedApplications.map((app) => (
-                  <TableRow key={app.id}>
+                paginatedApplications.map((app, index) => (
+                  <TableRow 
+                    key={app.id}
+                    className={cn(
+                      index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                    )}
+                  >
                     {columnVisibility.company_name && (
-                      <TableCell><EditableCell app={app} field="company_name" /></TableCell>
+                      <TableCell className="font-medium">
+                        <EditableCell app={app} field="company_name" />
+                      </TableCell>
                     )}
                     {columnVisibility.position && (
                       <TableCell><EditableCell app={app} field="position" /></TableCell>
@@ -361,7 +372,7 @@ export default function Applications() {
                       <TableCell><EditableCell app={app} field="location" /></TableCell>
                     )}
                     {columnVisibility.date && (
-                      <TableCell className="text-xs">{format(new Date(app.date), "dd/MM/yyyy")}</TableCell>
+                      <TableCell className="text-muted-foreground">{format(new Date(app.date), "dd MMM yyyy")}</TableCell>
                     )}
                     {columnVisibility.status && (
                       <TableCell><EditableCell app={app} field="status" type="select" /></TableCell>
@@ -382,8 +393,8 @@ export default function Applications() {
                       <TableCell><EditableCell app={app} field="contact_phone" /></TableCell>
                     )}
                     {columnVisibility.follow_up_date && (
-                      <TableCell className="text-xs">
-                        {app.follow_up_date ? format(new Date(app.follow_up_date), "dd/MM/yyyy") : "-"}
+                      <TableCell className="text-muted-foreground">
+                        {app.follow_up_date ? format(new Date(app.follow_up_date), "dd MMM yyyy") : "-"}
                       </TableCell>
                     )}
                     {columnVisibility.follow_up_note && (
@@ -396,19 +407,19 @@ export default function Applications() {
                       <TableCell><EditableCell app={app} field="notes" /></TableCell>
                     )}
                     {columnVisibility.created_at && (
-                      <TableCell className="text-xs">{format(new Date(app.created_at), "dd/MM/yyyy")}</TableCell>
+                      <TableCell className="text-muted-foreground">{format(new Date(app.created_at), "dd MMM yyyy")}</TableCell>
                     )}
                     {columnVisibility.updated_at && (
-                      <TableCell className="text-xs">{format(new Date(app.updated_at), "dd/MM/yyyy")}</TableCell>
+                      <TableCell className="text-muted-foreground">{format(new Date(app.updated_at), "dd MMM yyyy")}</TableCell>
                     )}
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                             •••
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="z-50 bg-popover">
+                        <DropdownMenuContent align="end" className="z-50 bg-popover w-40">
                           <DropdownMenuItem onClick={() => navigate(`/applications/${app.id}`)}>
                             <Eye className="h-4 w-4 mr-2" />
                             Lihat
@@ -424,7 +435,7 @@ export default function Applications() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => handleDelete(app.id)}
-                            className="text-destructive"
+                            className="text-destructive focus:text-destructive"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Hapus
