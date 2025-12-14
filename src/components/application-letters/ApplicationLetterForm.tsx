@@ -27,6 +27,8 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { FormError } from "@/components/ui/form-error";
 import { SignatureUpload } from "./SignatureUpload";
+import { TemplateSelector } from "@/components/ui/template-selector";
+import { applicationLetterTemplates } from "@/data/documentTemplates";
 import {
   ApplicationLetter,
   GENDER_OPTIONS,
@@ -35,6 +37,7 @@ import {
 } from "@/types/applicationLetter";
 
 const applicationLetterSchema = z.object({
+  template_id: z.string().optional(),
   name: z.string().min(1, "Nama wajib diisi"),
   birth_place_date: z.string().min(1, "Tempat/tanggal lahir wajib diisi"),
   gender: z.enum(["male", "female"]),
@@ -73,6 +76,8 @@ export function ApplicationLetterForm({
   onCancel,
   isLoading,
 }: ApplicationLetterFormProps) {
+  const [selectedTemplate, setSelectedTemplate] = useState(initialData?.template_id || applicationLetterTemplates[0]?.id || "");
+
   const {
     register,
     handleSubmit,
@@ -82,6 +87,7 @@ export function ApplicationLetterForm({
   } = useForm<ApplicationLetterFormData>({
     resolver: zodResolver(applicationLetterSchema),
     defaultValues: {
+      template_id: initialData?.template_id || applicationLetterTemplates[0]?.id || "",
       name: initialData?.name || "",
       birth_place_date: initialData?.birth_place_date || "",
       gender: initialData?.gender || "male",
@@ -139,6 +145,20 @@ export function ApplicationLetterForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Template Selection */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Template Surat</h3>
+        <TemplateSelector
+          label="Pilih Template"
+          templates={applicationLetterTemplates}
+          value={selectedTemplate}
+          onChange={(value) => {
+            setSelectedTemplate(value);
+            setValue("template_id", value);
+          }}
+        />
+      </Card>
+
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">Informasi Pelamar</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

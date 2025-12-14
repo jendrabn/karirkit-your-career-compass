@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,6 +19,8 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { FormError } from "@/components/ui/form-error";
 import { PhotoUpload } from "./PhotoUpload";
+import { TemplateSelector } from "@/components/ui/template-selector";
+import { cvTemplates } from "@/data/documentTemplates";
 import {
   CV,
   DEGREE_OPTIONS,
@@ -98,6 +101,7 @@ const organizationSchema = z.object({
 });
 
 const cvSchema = z.object({
+  template_id: z.string().optional(),
   name: z.string().min(1, "Nama wajib diisi"),
   headline: z.string().min(1, "Headline wajib diisi"),
   email: z.string().email("Email tidak valid"),
@@ -132,6 +136,8 @@ export function CVForm({
   onCancel,
   isLoading,
 }: CVFormProps) {
+  const [selectedTemplate, setSelectedTemplate] = useState(initialData?.template_id || cvTemplates[0]?.id || "");
+
   const {
     register,
     control,
@@ -142,6 +148,7 @@ export function CVForm({
   } = useForm<CVFormData>({
     resolver: zodResolver(cvSchema),
     defaultValues: {
+      template_id: initialData?.template_id || cvTemplates[0]?.id || "",
       name: initialData?.name || "",
       headline: initialData?.headline || "",
       email: initialData?.email || "",
@@ -171,6 +178,20 @@ export function CVForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Template Selection */}
+      <Card className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Template CV</h3>
+        <TemplateSelector
+          label="Pilih Template"
+          templates={cvTemplates}
+          value={selectedTemplate}
+          onChange={(value) => {
+            setSelectedTemplate(value);
+            setValue("template_id", value);
+          }}
+        />
+      </Card>
+
       {/* Personal Info */}
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">Informasi Pribadi</h3>

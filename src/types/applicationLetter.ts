@@ -5,6 +5,7 @@ export type Language = "en" | "id";
 export interface ApplicationLetter {
   id: string;
   user_id: string;
+  template_id?: string;
   name: string;
   birth_place_date: string;
   gender: Gender;
