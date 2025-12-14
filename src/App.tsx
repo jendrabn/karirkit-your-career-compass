@@ -24,6 +24,8 @@ import CVCreate from "./pages/CVCreate";
 import CVEdit from "./pages/CVEdit";
 import CVShow from "./pages/CVShow";
 import Portfolios from "./pages/Portfolios";
+import PortfolioCreate from "./pages/PortfolioCreate";
+import PortfolioEdit from "./pages/PortfolioEdit";
 import PortfolioList from "./pages/PortfolioList";
 import PortfolioDetail from "./pages/PortfolioDetail";
 import NotFound from "./pages/NotFound";
@@ -58,6 +60,8 @@ const App = () => (
           <Route path="/cvs/:id/edit" element={<CVEdit />} />
           <Route path="/cvs/:id" element={<CVShow />} />
           <Route path="/portfolios" element={<Portfolios />} />
+          <Route path="/portfolios/create" element={<PortfolioCreate />} />
+          <Route path="/portfolios/:id/edit" element={<PortfolioEdit />} />
           <Route path="/me/:username" element={<PortfolioList />} />
           <Route path="/me/:username/:id" element={<PortfolioDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
