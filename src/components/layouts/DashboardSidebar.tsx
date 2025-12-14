@@ -39,7 +39,7 @@ const menuItems = [
   },
   {
     title: "CV",
-    url: "/cv",
+    url: "/cvs",
     icon: FileText,
   },
   {
