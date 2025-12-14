@@ -15,6 +15,10 @@ import Applications from "./pages/Applications";
 import ApplicationCreate from "./pages/ApplicationCreate";
 import ApplicationEdit from "./pages/ApplicationEdit";
 import ApplicationShow from "./pages/ApplicationShow";
+import ApplicationLetters from "./pages/ApplicationLetters";
+import ApplicationLetterCreate from "./pages/ApplicationLetterCreate";
+import ApplicationLetterEdit from "./pages/ApplicationLetterEdit";
+import ApplicationLetterShow from "./pages/ApplicationLetterShow";
 import PortfolioList from "./pages/PortfolioList";
 import PortfolioDetail from "./pages/PortfolioDetail";
 import NotFound from "./pages/NotFound";
@@ -40,6 +44,10 @@ const App = () => (
           <Route path="/applications/create" element={<ApplicationCreate />} />
           <Route path="/applications/:id/edit" element={<ApplicationEdit />} />
           <Route path="/applications/:id" element={<ApplicationShow />} />
+          <Route path="/application-letters" element={<ApplicationLetters />} />
+          <Route path="/application-letters/create" element={<ApplicationLetterCreate />} />
+          <Route path="/application-letters/:id/edit" element={<ApplicationLetterEdit />} />
+          <Route path="/application-letters/:id" element={<ApplicationLetterShow />} />
           <Route path="/me/:username" element={<PortfolioList />} />
           <Route path="/me/:username/:id" element={<PortfolioDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
