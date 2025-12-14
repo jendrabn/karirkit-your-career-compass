@@ -15,6 +15,8 @@ import {
   ChevronsLeft,
   ChevronsRight,
   MoreVertical,
+  Mail,
+  Phone,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -499,12 +501,12 @@ export default function Applications() {
                     )}
                   >
                     {columnVisibility.position && (
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium whitespace-nowrap">
                         <EditableCell app={app} field="position" />
                       </TableCell>
                     )}
                     {columnVisibility.company_name && (
-                      <TableCell><EditableCell app={app} field="company_name" /></TableCell>
+                      <TableCell className="whitespace-nowrap"><EditableCell app={app} field="company_name" /></TableCell>
                     )}
                     {columnVisibility.status && (
                       <TableCell><EditableCell app={app} field="status" type="select" /></TableCell>
@@ -521,16 +523,16 @@ export default function Applications() {
                       </TableCell>
                     )}
                     {columnVisibility.location && (
-                      <TableCell><EditableCell app={app} field="location" /></TableCell>
+                      <TableCell className="whitespace-nowrap"><EditableCell app={app} field="location" /></TableCell>
                     )}
                     {columnVisibility.job_type && (
-                      <TableCell><EditableCell app={app} field="job_type" type="select" /></TableCell>
+                      <TableCell className="whitespace-nowrap"><EditableCell app={app} field="job_type" type="select" /></TableCell>
                     )}
                     {columnVisibility.work_system && (
-                      <TableCell><EditableCell app={app} field="work_system" type="select" /></TableCell>
+                      <TableCell className="whitespace-nowrap"><EditableCell app={app} field="work_system" type="select" /></TableCell>
                     )}
                     {columnVisibility.job_source && (
-                      <TableCell><EditableCell app={app} field="job_source" /></TableCell>
+                      <TableCell className="whitespace-nowrap"><EditableCell app={app} field="job_source" /></TableCell>
                     )}
                     {columnVisibility.salary_range && (
                       <TableCell>
@@ -540,13 +542,43 @@ export default function Applications() {
                       </TableCell>
                     )}
                     {columnVisibility.contact_name && (
-                      <TableCell><EditableCell app={app} field="contact_name" /></TableCell>
+                      <TableCell className="whitespace-nowrap"><EditableCell app={app} field="contact_name" /></TableCell>
                     )}
                     {columnVisibility.contact_email && (
-                      <TableCell><EditableCell app={app} field="contact_email" /></TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <EditableCell app={app} field="contact_email" />
+                          {app.contact_email && (
+                            <a
+                              href={`mailto:${app.contact_email}`}
+                              className="text-muted-foreground hover:text-primary transition-colors"
+                              title="Kirim Email"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Mail className="h-4 w-4" />
+                            </a>
+                          )}
+                        </div>
+                      </TableCell>
                     )}
                     {columnVisibility.contact_phone && (
-                      <TableCell><EditableCell app={app} field="contact_phone" /></TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <EditableCell app={app} field="contact_phone" />
+                          {app.contact_phone && (
+                            <a
+                              href={`https://wa.me/62${app.contact_phone.replace(/^0/, '').replace(/\D/g, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-muted-foreground hover:text-primary transition-colors"
+                              title="Hubungi via WhatsApp"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Phone className="h-4 w-4" />
+                            </a>
+                          )}
+                        </div>
+                      </TableCell>
                     )}
                     <TableCell>
                       <DropdownMenu>
