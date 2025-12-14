@@ -212,7 +212,7 @@ export default function Applications() {
           value={app[field] as string}
           onValueChange={(val) => updateApplication(app.id, field, val)}
         >
-          <SelectTrigger className="h-8 w-auto min-w-[100px] text-[14px]">
+          <SelectTrigger className="h-8 w-auto min-w-[90px] text-sm border-transparent bg-transparent hover:bg-muted/60 focus:bg-muted/60">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="z-50 bg-popover">
@@ -235,14 +235,14 @@ export default function Applications() {
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
-          className="h-8 w-auto min-w-[100px] text-[14px]"
+          className="h-8 w-auto min-w-[100px] text-sm"
         />
       );
     }
 
     return (
       <span
-        className="cursor-pointer hover:bg-muted px-2 py-1 rounded text-[14px]"
+        className="cursor-pointer hover:bg-muted/60 px-2 py-1 rounded-md text-sm transition-colors"
         onClick={() => setIsEditing(true)}
       >
         {String(app[field]) || "-"}
@@ -352,13 +352,8 @@ export default function Applications() {
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedApplications.map((app, index) => (
-                  <TableRow 
-                    key={app.id}
-                    className={cn(
-                      index % 2 === 0 ? "bg-background" : "bg-muted/20"
-                    )}
-                  >
+                paginatedApplications.map((app) => (
+                  <TableRow key={app.id}>
                     {columnVisibility.company_name && (
                       <TableCell className="font-medium">
                         <EditableCell app={app} field="company_name" />
