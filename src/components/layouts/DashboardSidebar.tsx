@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, FileText, ChevronUp, User, Lock, LogOut } from "lucide-react";
+import logo from "@/assets/karirkit-logo.png";
 import {
   Sidebar,
   SidebarContent,
@@ -56,7 +56,7 @@ export function DashboardSidebar() {
     <Sidebar collapsible="icon" className="border-r">
       <SidebarContent className="pt-6">
         <div className="px-4 mb-6 group-data-[state=collapsed]:hidden">
-          <h1 className="text-xl font-bold text-primary">KarirKit</h1>
+          <img src={logo} alt="KarirKit Logo" className="h-8 w-auto" />
         </div>
 
         <SidebarGroup>
