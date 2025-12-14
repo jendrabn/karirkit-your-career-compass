@@ -114,7 +114,17 @@ const getStatusBadgeVariant = (status: ApplicationStatus) => {
   return "default";
 };
 
-type SortField = "date" | "created_at" | "updated_at" | "company_name" | "position" | "status" | "result_status";
+// Format salary range
+const formatSalaryRange = (min: number, max: number) => {
+  const formatNum = (n: number) => {
+    if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+    if (n >= 1000) return `${(n / 1000).toFixed(0)}K`;
+    return n.toString();
+  };
+  return `${formatNum(min)} - ${formatNum(max)}`;
+};
+
+type SortField = "date" | "company_name" | "position" | "status" | "result_status" | "follow_up_date";
 type SortOrder = "asc" | "desc";
 
 export default function Applications() {
@@ -123,8 +133,8 @@ export default function Applications() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState<FilterValues>({});
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(defaultColumnVisibility);
-  const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+  const [sortField, setSortField] = useState<SortField | null>("date");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [applications, setApplications] = useState<Application[]>(mockApplications);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState<string | null>(null);
@@ -353,20 +363,11 @@ export default function Applications() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                {columnVisibility.company_name && (
-                  <TableHead><SortableHeader field="company_name">Perusahaan</SortableHeader></TableHead>
-                )}
                 {columnVisibility.position && (
                   <TableHead><SortableHeader field="position">Posisi</SortableHeader></TableHead>
                 )}
-                {columnVisibility.job_source && <TableHead>Sumber</TableHead>}
-                {columnVisibility.job_type && <TableHead>Tipe</TableHead>}
-                {columnVisibility.work_system && <TableHead>Sistem</TableHead>}
-                {columnVisibility.salary_min && <TableHead>Gaji Min</TableHead>}
-                {columnVisibility.salary_max && <TableHead>Gaji Max</TableHead>}
-                {columnVisibility.location && <TableHead>Lokasi</TableHead>}
-                {columnVisibility.date && (
-                  <TableHead><SortableHeader field="date">Tanggal</SortableHeader></TableHead>
+                {columnVisibility.company_name && (
+                  <TableHead><SortableHeader field="company_name">Perusahaan</SortableHeader></TableHead>
                 )}
                 {columnVisibility.status && (
                   <TableHead><SortableHeader field="status">Status</SortableHeader></TableHead>
@@ -374,19 +375,35 @@ export default function Applications() {
                 {columnVisibility.result_status && (
                   <TableHead><SortableHeader field="result_status">Hasil</SortableHeader></TableHead>
                 )}
-                {columnVisibility.company_url && <TableHead>URL Perusahaan</TableHead>}
-                {columnVisibility.contact_name && <TableHead>Nama Kontak</TableHead>}
-                {columnVisibility.contact_email && <TableHead>Email Kontak</TableHead>}
-                {columnVisibility.contact_phone && <TableHead>Telp Kontak</TableHead>}
-                {columnVisibility.follow_up_date && <TableHead>Follow Up</TableHead>}
-                {columnVisibility.follow_up_note && <TableHead>Catatan FU</TableHead>}
-                {columnVisibility.job_url && <TableHead>URL Lowongan</TableHead>}
-                {columnVisibility.notes && <TableHead>Catatan</TableHead>}
-                {columnVisibility.created_at && (
-                  <TableHead><SortableHeader field="created_at">Dibuat</SortableHeader></TableHead>
+                {columnVisibility.date && (
+                  <TableHead><SortableHeader field="date">Tanggal Lamar</SortableHeader></TableHead>
                 )}
-                {columnVisibility.updated_at && (
-                  <TableHead><SortableHeader field="updated_at">Diperbarui</SortableHeader></TableHead>
+                {columnVisibility.follow_up_date && (
+                  <TableHead><SortableHeader field="follow_up_date">Follow Up</SortableHeader></TableHead>
+                )}
+                {columnVisibility.location && (
+                  <TableHead className="uppercase text-xs font-medium tracking-wide">Lokasi</TableHead>
+                )}
+                {columnVisibility.job_type && (
+                  <TableHead className="uppercase text-xs font-medium tracking-wide">Tipe Kerja</TableHead>
+                )}
+                {columnVisibility.work_system && (
+                  <TableHead className="uppercase text-xs font-medium tracking-wide">Sistem Kerja</TableHead>
+                )}
+                {columnVisibility.job_source && (
+                  <TableHead className="uppercase text-xs font-medium tracking-wide">Sumber Lowongan</TableHead>
+                )}
+                {columnVisibility.salary_range && (
+                  <TableHead className="uppercase text-xs font-medium tracking-wide">Rentang Gaji</TableHead>
+                )}
+                {columnVisibility.contact_name && (
+                  <TableHead className="uppercase text-xs font-medium tracking-wide">Kontak HR</TableHead>
+                )}
+                {columnVisibility.contact_email && (
+                  <TableHead className="uppercase text-xs font-medium tracking-wide">Email HR</TableHead>
+                )}
+                {columnVisibility.contact_phone && (
+                  <TableHead className="uppercase text-xs font-medium tracking-wide">Telepon HR</TableHead>
                 )}
                 <TableHead className="w-[60px]"></TableHead>
               </TableRow>
@@ -394,7 +411,7 @@ export default function Applications() {
             <TableBody>
               {paginatedApplications.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={20} className="text-center py-16 text-muted-foreground">
+                  <TableCell colSpan={15} className="text-center py-16 text-muted-foreground">
                     <div className="flex flex-col items-center gap-2">
                       <Search className="h-10 w-10 text-muted-foreground/50" />
                       <p className="text-base font-medium">Tidak ada data lamaran</p>
@@ -410,34 +427,13 @@ export default function Applications() {
                       index % 2 === 0 ? "bg-background" : "bg-muted/20"
                     )}
                   >
-                    {columnVisibility.company_name && (
+                    {columnVisibility.position && (
                       <TableCell className="font-medium">
-                        <EditableCell app={app} field="company_name" />
+                        <EditableCell app={app} field="position" />
                       </TableCell>
                     )}
-                    {columnVisibility.position && (
-                      <TableCell><EditableCell app={app} field="position" /></TableCell>
-                    )}
-                    {columnVisibility.job_source && (
-                      <TableCell><EditableCell app={app} field="job_source" /></TableCell>
-                    )}
-                    {columnVisibility.job_type && (
-                      <TableCell><EditableCell app={app} field="job_type" type="select" /></TableCell>
-                    )}
-                    {columnVisibility.work_system && (
-                      <TableCell><EditableCell app={app} field="work_system" type="select" /></TableCell>
-                    )}
-                    {columnVisibility.salary_min && (
-                      <TableCell><EditableCell app={app} field="salary_min" type="number" /></TableCell>
-                    )}
-                    {columnVisibility.salary_max && (
-                      <TableCell><EditableCell app={app} field="salary_max" type="number" /></TableCell>
-                    )}
-                    {columnVisibility.location && (
-                      <TableCell><EditableCell app={app} field="location" /></TableCell>
-                    )}
-                    {columnVisibility.date && (
-                      <TableCell className="text-muted-foreground">{format(new Date(app.date), "dd MMM yyyy")}</TableCell>
+                    {columnVisibility.company_name && (
+                      <TableCell><EditableCell app={app} field="company_name" /></TableCell>
                     )}
                     {columnVisibility.status && (
                       <TableCell><EditableCell app={app} field="status" type="select" /></TableCell>
@@ -445,8 +441,32 @@ export default function Applications() {
                     {columnVisibility.result_status && (
                       <TableCell><EditableCell app={app} field="result_status" type="select" /></TableCell>
                     )}
-                    {columnVisibility.company_url && (
-                      <TableCell><EditableCell app={app} field="company_url" /></TableCell>
+                    {columnVisibility.date && (
+                      <TableCell className="text-muted-foreground">{format(new Date(app.date), "dd MMM yyyy")}</TableCell>
+                    )}
+                    {columnVisibility.follow_up_date && (
+                      <TableCell className="text-muted-foreground">
+                        {app.follow_up_date ? format(new Date(app.follow_up_date), "dd MMM yyyy") : "-"}
+                      </TableCell>
+                    )}
+                    {columnVisibility.location && (
+                      <TableCell><EditableCell app={app} field="location" /></TableCell>
+                    )}
+                    {columnVisibility.job_type && (
+                      <TableCell><EditableCell app={app} field="job_type" type="select" /></TableCell>
+                    )}
+                    {columnVisibility.work_system && (
+                      <TableCell><EditableCell app={app} field="work_system" type="select" /></TableCell>
+                    )}
+                    {columnVisibility.job_source && (
+                      <TableCell><EditableCell app={app} field="job_source" /></TableCell>
+                    )}
+                    {columnVisibility.salary_range && (
+                      <TableCell>
+                        <Badge variant="secondary" className="text-xs">
+                          {formatSalaryRange(app.salary_min, app.salary_max)}
+                        </Badge>
+                      </TableCell>
                     )}
                     {columnVisibility.contact_name && (
                       <TableCell><EditableCell app={app} field="contact_name" /></TableCell>
@@ -457,34 +477,19 @@ export default function Applications() {
                     {columnVisibility.contact_phone && (
                       <TableCell><EditableCell app={app} field="contact_phone" /></TableCell>
                     )}
-                    {columnVisibility.follow_up_date && (
-                      <TableCell className="text-muted-foreground">
-                        {app.follow_up_date ? format(new Date(app.follow_up_date), "dd MMM yyyy") : "-"}
-                      </TableCell>
-                    )}
-                    {columnVisibility.follow_up_note && (
-                      <TableCell><EditableCell app={app} field="follow_up_note" /></TableCell>
-                    )}
-                    {columnVisibility.job_url && (
-                      <TableCell><EditableCell app={app} field="job_url" /></TableCell>
-                    )}
-                    {columnVisibility.notes && (
-                      <TableCell><EditableCell app={app} field="notes" /></TableCell>
-                    )}
-                    {columnVisibility.created_at && (
-                      <TableCell className="text-muted-foreground">{format(new Date(app.created_at), "dd MMM yyyy")}</TableCell>
-                    )}
-                    {columnVisibility.updated_at && (
-                      <TableCell className="text-muted-foreground">{format(new Date(app.updated_at), "dd MMM yyyy")}</TableCell>
-                    )}
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            •••
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <span className="sr-only">Menu</span>
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <circle cx="12" cy="12" r="1" />
+                              <circle cx="12" cy="5" r="1" />
+                              <circle cx="12" cy="19" r="1" />
+                            </svg>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="z-50 bg-popover w-40">
+                        <DropdownMenuContent align="end" className="z-50 bg-popover">
                           <DropdownMenuItem onClick={() => navigate(`/applications/${app.id}`)}>
                             <Eye className="h-4 w-4 mr-2" />
                             Lihat
@@ -493,12 +498,20 @@ export default function Applications() {
                             <Pencil className="h-4 w-4 mr-2" />
                             Edit
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => {
+                            const newApp = {
+                              ...app,
+                              id: `${Date.now()}`,
+                              created_at: new Date().toISOString(),
+                              updated_at: new Date().toISOString(),
+                            };
+                            setApplications((prev) => [newApp, ...prev]);
+                          }}>
                             <Copy className="h-4 w-4 mr-2" />
-                            Duplikat
+                            Duplikasi
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem
+                          <DropdownMenuItem 
                             onClick={() => handleDelete(app.id)}
                             className="text-destructive focus:text-destructive"
                           >
@@ -514,69 +527,78 @@ export default function Applications() {
             </TableBody>
           </Table>
         </div>
-      </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between mt-4">
-        <p className="text-sm text-muted-foreground">
-          {filteredAndSortedApplications.length} data
-        </p>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Baris per halaman</span>
-          <Select value={String(perPage)} onValueChange={(val) => setPerPage(Number(val))}>
-            <SelectTrigger className="w-16 h-8">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="z-50 bg-popover">
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-            </SelectContent>
-          </Select>
-          <span className="text-sm text-muted-foreground mx-2">
-            Halaman {currentPage} dari {totalPages || 1}
-          </span>
-          <div className="flex gap-1">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setCurrentPage(1)}
-              disabled={currentPage === 1}
-            >
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages || totalPages === 0}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setCurrentPage(totalPages)}
-              disabled={currentPage === totalPages || totalPages === 0}
-            >
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
+        {/* Pagination */}
+        {filteredAndSortedApplications.length > 0 && (
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-4 py-4 border-t border-border/60">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>Tampilkan</span>
+              <Select
+                value={String(perPage)}
+                onValueChange={(value) => {
+                  setPerPage(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[70px] h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="z-50 bg-popover">
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+              <span>dari {filteredAndSortedApplications.length} data</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="px-3 text-sm">
+                Halaman {currentPage} dari {totalPages || 1}
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages || totalPages === 0}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages || totalPages === 0}
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
+      {/* Filter Modal */}
       <ApplicationFilterModal
         open={filterModalOpen}
         onOpenChange={setFilterModalOpen}
@@ -584,6 +606,7 @@ export default function Applications() {
         onApplyFilters={setFilters}
       />
 
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -594,7 +617,7 @@ export default function Applications() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground">
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Hapus
             </AlertDialogAction>
           </AlertDialogFooter>

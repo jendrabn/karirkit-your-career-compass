@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,76 +10,73 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export interface ColumnVisibility {
-  company_name: boolean;
-  company_url: boolean;
   position: boolean;
-  job_source: boolean;
-  job_type: boolean;
-  work_system: boolean;
-  salary_min: boolean;
-  salary_max: boolean;
-  location: boolean;
-  date: boolean;
+  company_name: boolean;
   status: boolean;
   result_status: boolean;
+  date: boolean;
+  follow_up_date: boolean;
+  location: boolean;
+  job_type: boolean;
+  work_system: boolean;
+  job_source: boolean;
+  salary_range: boolean;
   contact_name: boolean;
   contact_email: boolean;
   contact_phone: boolean;
-  follow_up_date: boolean;
-  follow_up_note: boolean;
-  job_url: boolean;
-  notes: boolean;
-  created_at: boolean;
-  updated_at: boolean;
 }
 
 export const defaultColumnVisibility: ColumnVisibility = {
-  company_name: true,
-  company_url: false,
   position: true,
-  job_source: true,
-  job_type: true,
-  work_system: true,
-  salary_min: false,
-  salary_max: false,
-  location: true,
-  date: true,
+  company_name: true,
   status: true,
   result_status: true,
+  date: true,
+  follow_up_date: true,
+  location: false,
+  job_type: false,
+  work_system: false,
+  job_source: false,
+  salary_range: false,
   contact_name: false,
   contact_email: false,
   contact_phone: false,
-  follow_up_date: false,
-  follow_up_note: false,
-  job_url: false,
-  notes: false,
-  created_at: false,
-  updated_at: false,
 };
 
 const columnLabels: Record<keyof ColumnVisibility, string> = {
-  company_name: "Nama Perusahaan",
-  company_url: "URL Perusahaan",
   position: "Posisi",
-  job_source: "Sumber Lowongan",
-  job_type: "Tipe Pekerjaan",
-  work_system: "Sistem Kerja",
-  salary_min: "Gaji Min",
-  salary_max: "Gaji Max",
-  location: "Lokasi",
-  date: "Tanggal",
+  company_name: "Perusahaan",
   status: "Status",
   result_status: "Hasil",
-  contact_name: "Nama Kontak",
-  contact_email: "Email Kontak",
-  contact_phone: "Telepon Kontak",
-  follow_up_date: "Tanggal Follow Up",
-  follow_up_note: "Catatan Follow Up",
-  job_url: "URL Lowongan",
-  notes: "Catatan",
-  created_at: "Dibuat",
-  updated_at: "Diperbarui",
+  date: "Tanggal Lamar",
+  follow_up_date: "Follow Up",
+  location: "Lokasi",
+  job_type: "Tipe Kerja",
+  work_system: "Sistem Kerja",
+  job_source: "Sumber Lowongan",
+  salary_range: "Rentang Gaji",
+  contact_name: "Kontak HR",
+  contact_email: "Email HR",
+  contact_phone: "Telepon HR",
 };
+
+// Define the order of columns as specified
+const columnOrder: (keyof ColumnVisibility)[] = [
+  "position",
+  "company_name",
+  "status",
+  "result_status",
+  "date",
+  "follow_up_date",
+  "location",
+  "job_type",
+  "work_system",
+  "job_source",
+  "salary_range",
+  "contact_name",
+  "contact_email",
+  "contact_phone",
+];
 
 interface ColumnToggleProps {
   visibility: ColumnVisibility;
@@ -106,7 +102,7 @@ export function ColumnToggle({ visibility, onVisibilityChange }: ColumnTogglePro
       <DropdownMenuContent align="end" className="w-56 z-50 bg-popover max-h-80 overflow-y-auto">
         <DropdownMenuLabel>Tampilkan Kolom</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {(Object.keys(visibility) as Array<keyof ColumnVisibility>).map((column) => (
+        {columnOrder.map((column) => (
           <DropdownMenuCheckboxItem
             key={column}
             checked={visibility[column]}

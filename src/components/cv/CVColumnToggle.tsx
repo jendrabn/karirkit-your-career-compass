@@ -1,36 +1,63 @@
 import { Button } from "@/components/ui/button";
-import { Columns } from "lucide-react";
+import { Settings2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 export interface ColumnVisibility {
-  name: boolean;
   headline: boolean;
+  about: boolean;
+  latest_experience: boolean;
+  latest_education: boolean;
+  skills_count: boolean;
+  updated_at: boolean;
+  name: boolean;
   email: boolean;
   phone: boolean;
   address: boolean;
-  educations: boolean;
-  experiences: boolean;
-  skills: boolean;
-  created_at: boolean;
-  updated_at: boolean;
+  photo: boolean;
+  certificates_count: boolean;
+  awards_count: boolean;
+  organizations_count: boolean;
 }
 
 export const defaultColumnVisibility: ColumnVisibility = {
-  name: true,
   headline: true,
-  email: true,
+  about: true,
+  latest_experience: true,
+  latest_education: true,
+  skills_count: true,
+  updated_at: true,
+  name: false,
+  email: false,
   phone: false,
   address: false,
-  educations: true,
-  experiences: true,
-  skills: true,
-  created_at: true,
-  updated_at: false,
+  photo: false,
+  certificates_count: false,
+  awards_count: false,
+  organizations_count: false,
+};
+
+const columnLabels: Record<keyof ColumnVisibility, string> = {
+  headline: "Headline / Posisi",
+  about: "Ringkasan",
+  latest_experience: "Pengalaman Terakhir",
+  latest_education: "Pendidikan Terakhir",
+  skills_count: "Jumlah Skill",
+  updated_at: "Terakhir Diperbarui",
+  name: "Nama Pemilik",
+  email: "Email",
+  phone: "No. Telepon",
+  address: "Alamat",
+  photo: "Foto",
+  certificates_count: "Jumlah Sertifikat",
+  awards_count: "Jumlah Penghargaan",
+  organizations_count: "Organisasi",
 };
 
 interface CVColumnToggleProps {
@@ -38,18 +65,23 @@ interface CVColumnToggleProps {
   onVisibilityChange: (visibility: ColumnVisibility) => void;
 }
 
-const columnLabels: Record<keyof ColumnVisibility, string> = {
-  name: "Nama",
-  headline: "Headline",
-  email: "Email",
-  phone: "Telepon",
-  address: "Alamat",
-  educations: "Pendidikan",
-  experiences: "Pengalaman",
-  skills: "Keahlian",
-  created_at: "Dibuat",
-  updated_at: "Diperbarui",
-};
+// Define the order of columns as specified
+const columnOrder: (keyof ColumnVisibility)[] = [
+  "headline",
+  "about",
+  "latest_experience",
+  "latest_education",
+  "skills_count",
+  "updated_at",
+  "name",
+  "email",
+  "phone",
+  "address",
+  "photo",
+  "certificates_count",
+  "awards_count",
+  "organizations_count",
+];
 
 export function CVColumnToggle({ visibility, onVisibilityChange }: CVColumnToggleProps) {
   const handleToggle = (column: keyof ColumnVisibility) => {
@@ -60,18 +92,20 @@ export function CVColumnToggle({ visibility, onVisibilityChange }: CVColumnToggl
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm">
-          <Columns className="h-4 w-4 mr-2" />
-          Kolom
+          <Settings2 className="h-4 w-4 mr-2" />
+          View
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48 bg-popover z-50">
-        {Object.keys(visibility).map((column) => (
+      <DropdownMenuContent align="end" className="w-56 z-50 bg-popover max-h-80 overflow-y-auto">
+        <DropdownMenuLabel>Tampilkan Kolom</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {columnOrder.map((column) => (
           <DropdownMenuCheckboxItem
             key={column}
-            checked={visibility[column as keyof ColumnVisibility]}
-            onCheckedChange={() => handleToggle(column as keyof ColumnVisibility)}
+            checked={visibility[column]}
+            onCheckedChange={() => handleToggle(column)}
           >
-            {columnLabels[column as keyof ColumnVisibility]}
+            {columnLabels[column]}
           </DropdownMenuCheckboxItem>
         ))}
       </DropdownMenuContent>
