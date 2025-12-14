@@ -364,14 +364,14 @@ export default function Applications() {
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
-          className="h-8 w-auto min-w-[100px] text-xs"
+          className="h-8 w-auto min-w-[100px]"
         />
       );
     }
 
     return (
       <span
-        className="cursor-pointer hover:bg-muted px-2 py-1 rounded text-xs"
+        className="cursor-pointer hover:bg-muted px-2 py-1 rounded"
         onClick={() => setIsEditing(true)}
       >
         {String(app[field]) || "-"}
