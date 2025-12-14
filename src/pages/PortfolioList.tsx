@@ -1,9 +1,10 @@
 import { useParams, Link } from "react-router-dom";
-import { ExternalLink, Github, Calendar, Briefcase, MapPin } from "lucide-react";
+import { Calendar, Briefcase, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { getPortfolioListData } from "@/data/mockPortfolios";
 import { projectTypeLabels } from "@/types/portfolio";
 
@@ -18,11 +19,15 @@ export default function PortfolioList() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">User tidak ditemukan</h1>
-          <p className="text-muted-foreground mt-2">Portfolio dengan username tersebut tidak tersedia.</p>
+      <div className="min-h-screen flex flex-col bg-background">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-foreground">User tidak ditemukan</h1>
+            <p className="text-muted-foreground mt-2">Portfolio dengan username tersebut tidak tersedia.</p>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -30,18 +35,11 @@ export default function PortfolioList() {
   const { user, portfolios } = data;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background">
-      {/* Header Section */}
-      <header className="bg-background/80 backdrop-blur-sm border-b sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <Link to="/" className="text-xl font-bold text-primary hover:opacity-80 transition-opacity">
-            KarirKit
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col bg-background">
+      <Navbar />
 
       {/* Profile Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center animate-fade-in">
             <Avatar className="h-32 w-32 mx-auto mb-6 ring-4 ring-primary/20">
@@ -64,14 +62,14 @@ export default function PortfolioList() {
       </section>
 
       {/* Portfolio Grid */}
-      <section className="pb-20 px-4">
+      <section className="flex-1 pb-20 px-4">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
             Portfolio ({portfolios.length})
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {portfolios.map((portfolio, index) => (
+            {portfolios.map((portfolio) => (
               <Link
                 key={portfolio.id}
                 to={`/me/${username}/${portfolio.id}`}
@@ -148,17 +146,7 @@ export default function PortfolioList() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 border-t bg-background">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            Dibuat dengan ❤️ menggunakan{" "}
-            <Link to="/" className="text-primary hover:underline">
-              KarirKit
-            </Link>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
