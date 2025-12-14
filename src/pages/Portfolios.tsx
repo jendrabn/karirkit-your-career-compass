@@ -20,6 +20,8 @@ import {
   FileText,
   Calendar,
   Briefcase,
+  Link2,
+  Check,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -198,12 +200,68 @@ export default function Portfolios() {
     toast.success(`Mengunduh portfolio dalam format ${format.toUpperCase()}...`);
   };
 
+  // Mock username - in real app, get from auth context
+  const username = "johndoe";
+  const publicPortfolioUrl = `${window.location.origin}/me/${username}`;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(publicPortfolioUrl);
+    setCopied(true);
+    toast.success("Link portfolio berhasil disalin");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <DashboardLayout>
       <PageHeader
         title="Portfolio"
         subtitle="Kelola dan tampilkan proyek-proyek terbaik Anda."
       />
+
+      {/* Public Portfolio Link */}
+      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <Link2 className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-medium">Portfolio Publik Anda</p>
+            <p className="text-sm text-muted-foreground truncate max-w-[300px]">
+              {publicPortfolioUrl}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopyLink}
+            className="gap-2"
+          >
+            {copied ? (
+              <>
+                <Check className="h-4 w-4" />
+                Tersalin
+              </>
+            ) : (
+              <>
+                <Copy className="h-4 w-4" />
+                Salin Link
+              </>
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.open(publicPortfolioUrl, "_blank")}
+            className="gap-2"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Lihat
+          </Button>
+        </div>
+      </div>
 
       {/* Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
