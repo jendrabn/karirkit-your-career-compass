@@ -71,7 +71,7 @@ export function DashboardSidebar() {
       <SidebarHeader className="border-b p-4 group-data-[state=collapsed]:p-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center justify-center gap-3 w-full p-2 rounded-lg hover:bg-muted transition-colors group-data-[state=expanded]:justify-start">
+            <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-muted transition-colors justify-start">
               <Avatar className="h-10 w-10 shrink-0 group-data-[state=collapsed]:h-8 group-data-[state=collapsed]:w-8">
                 <AvatarImage src={mockUser.avatar} />
                 <AvatarFallback className="bg-primary text-primary-foreground">
@@ -118,7 +118,7 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.url}
                       className={cn(
-                        "flex items-center justify-center gap-3 px-3 py-3 rounded-lg transition-colors group-data-[state=expanded]:justify-start",
+                        "flex items-center gap-3 px-3 py-3 rounded-lg transition-colors justify-start",
                         isActive(item.url)
                           ? "bg-primary text-primary-foreground"
                           : "hover:bg-muted text-foreground"

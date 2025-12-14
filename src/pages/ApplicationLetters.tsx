@@ -381,25 +381,17 @@ export default function ApplicationLetters() {
                               Duplikasi
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuSub>
-                              <DropdownMenuSubTrigger>
-                                <Download className="h-4 w-4 mr-2" />
-                                Download
-                              </DropdownMenuSubTrigger>
-                              <DropdownMenuSubContent className="bg-popover">
-                                <DropdownMenuItem onClick={() => handleDownload(letter, "docx")}>
-                                  <FileText className="h-4 w-4 mr-2" />
-                                  Word (.docx)
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => handleDownload(letter, "pdf")}
-                                  className="text-muted-foreground"
-                                >
-                                  <FileText className="h-4 w-4 mr-2" />
-                                  PDF (Segera Hadir)
-                                </DropdownMenuItem>
-                              </DropdownMenuSubContent>
-                            </DropdownMenuSub>
+                            <DropdownMenuItem onClick={() => handleDownload(letter, "docx")}>
+                              <Download className="h-4 w-4 mr-2" />
+                              Download Docx
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              disabled
+                              className="text-muted-foreground"
+                            >
+                              <Download className="h-4 w-4 mr-2" />
+                              Download PDF (Segera Hadir)
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               onClick={() => handleDelete(letter.id)}
