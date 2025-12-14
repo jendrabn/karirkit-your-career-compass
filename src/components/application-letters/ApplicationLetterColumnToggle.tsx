@@ -10,54 +10,48 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export interface ColumnVisibility {
-  name: boolean;
   subject: boolean;
   company_name: boolean;
   application_date: boolean;
   language: boolean;
+  name: boolean;
   email: boolean;
   phone: boolean;
   applicant_city: boolean;
   company_city: boolean;
-  gender: boolean;
-  marital_status: boolean;
   education: boolean;
-  created_at: boolean;
-  updated_at: boolean;
+  marital_status: boolean;
+  gender: boolean;
 }
 
 export const defaultColumnVisibility: ColumnVisibility = {
-  name: true,
   subject: true,
   company_name: true,
   application_date: true,
   language: true,
+  name: false,
   email: false,
   phone: false,
   applicant_city: false,
   company_city: false,
-  gender: false,
-  marital_status: false,
   education: false,
-  created_at: false,
-  updated_at: false,
+  marital_status: false,
+  gender: false,
 };
 
 const columnLabels: Record<keyof ColumnVisibility, string> = {
-  name: "Nama",
   subject: "Subjek",
   company_name: "Perusahaan",
-  application_date: "Tanggal Lamaran",
+  application_date: "Tanggal",
   language: "Bahasa",
+  name: "Nama Pelamar",
   email: "Email",
-  phone: "Telepon",
+  phone: "No. Telepon",
   applicant_city: "Kota Pelamar",
   company_city: "Kota Perusahaan",
-  gender: "Jenis Kelamin",
-  marital_status: "Status Pernikahan",
   education: "Pendidikan",
-  created_at: "Dibuat",
-  updated_at: "Diperbarui",
+  marital_status: "Status Pernikahan",
+  gender: "Gender",
 };
 
 interface ColumnToggleProps {
@@ -73,6 +67,22 @@ export function ApplicationLetterColumnToggle({ visibility, onVisibilityChange }
     });
   };
 
+  // Define the order of columns as specified
+  const columnOrder: (keyof ColumnVisibility)[] = [
+    "subject",
+    "company_name",
+    "application_date",
+    "language",
+    "name",
+    "email",
+    "phone",
+    "applicant_city",
+    "company_city",
+    "education",
+    "marital_status",
+    "gender",
+  ];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -84,7 +94,7 @@ export function ApplicationLetterColumnToggle({ visibility, onVisibilityChange }
       <DropdownMenuContent align="end" className="w-56 z-50 bg-popover max-h-80 overflow-y-auto">
         <DropdownMenuLabel>Tampilkan Kolom</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {(Object.keys(visibility) as Array<keyof ColumnVisibility>).map((column) => (
+        {columnOrder.map((column) => (
           <DropdownMenuCheckboxItem
             key={column}
             checked={visibility[column]}

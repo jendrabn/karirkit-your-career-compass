@@ -59,14 +59,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { CVFilterModal, FilterValues } from "@/components/cv/CVFilterModal";
 import { CVColumnToggle, ColumnVisibility, defaultColumnVisibility } from "@/components/cv/CVColumnToggle";
 import { mockCVs } from "@/data/mockCVs";
-import { CV, DEGREE_OPTIONS, SKILL_LEVEL_OPTIONS } from "@/types/cv";
+import { CV, DEGREE_OPTIONS } from "@/types/cv";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-type SortField = "created_at" | "updated_at" | "name";
+type SortField = "updated_at" | "name";
 type SortOrder = "asc" | "desc";
 
 export default function CVs() {
@@ -75,8 +81,8 @@ export default function CVs() {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState<FilterValues>({});
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(defaultColumnVisibility);
-  const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+  const [sortField, setSortField] = useState<SortField | null>("updated_at");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [cvs, setCvs] = useState<CV[]>(mockCVs);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [cvToDelete, setCvToDelete] = useState<string | null>(null);
@@ -176,6 +182,18 @@ export default function CVs() {
     toast.success(`Mengunduh CV dalam format ${format.toUpperCase()}`);
   };
 
+  // Helper to get latest experience
+  const getLatestExperience = (cv: CV) => {
+    if (!cv.experiences || cv.experiences.length === 0) return null;
+    return cv.experiences[0];
+  };
+
+  // Helper to get latest education
+  const getLatestEducation = (cv: CV) => {
+    if (!cv.educations || cv.educations.length === 0) return null;
+    return cv.educations[0];
+  };
+
   const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
     <Button
       variant="ghost"
@@ -223,170 +241,250 @@ export default function CVs() {
       {/* Table */}
       <div className="bg-card border border-border/60 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                {columnVisibility.name && (
-                  <TableHead><SortableHeader field="name">Nama</SortableHeader></TableHead>
-                )}
-                {columnVisibility.headline && <TableHead>Headline</TableHead>}
-                {columnVisibility.email && <TableHead>Email</TableHead>}
-                {columnVisibility.phone && <TableHead>Telepon</TableHead>}
-                {columnVisibility.address && <TableHead>Alamat</TableHead>}
-                {columnVisibility.educations && <TableHead>Pendidikan</TableHead>}
-                {columnVisibility.experiences && <TableHead>Pengalaman</TableHead>}
-                {columnVisibility.skills && <TableHead>Keahlian</TableHead>}
-                {columnVisibility.created_at && (
-                  <TableHead><SortableHeader field="created_at">Dibuat</SortableHeader></TableHead>
-                )}
-                {columnVisibility.updated_at && (
-                  <TableHead><SortableHeader field="updated_at">Diperbarui</SortableHeader></TableHead>
-                )}
-                <TableHead className="w-[60px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedCVs.length === 0 ? (
+          <TooltipProvider>
+            <Table>
+              <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={11} className="text-center py-16 text-muted-foreground">
-                    <div className="flex flex-col items-center gap-2">
-                      <FileText className="h-10 w-10 text-muted-foreground/50" />
-                      <p className="text-base font-medium">Tidak ada CV</p>
-                      <p className="text-sm">Mulai buat CV pertama Anda</p>
-                    </div>
-                  </TableCell>
+                  {columnVisibility.headline && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Headline / Posisi</TableHead>
+                  )}
+                  {columnVisibility.about && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Ringkasan</TableHead>
+                  )}
+                  {columnVisibility.latest_experience && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Pengalaman Terakhir</TableHead>
+                  )}
+                  {columnVisibility.latest_education && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Pendidikan Terakhir</TableHead>
+                  )}
+                  {columnVisibility.skills_count && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Jumlah Skill</TableHead>
+                  )}
+                  {columnVisibility.updated_at && (
+                    <TableHead><SortableHeader field="updated_at">Terakhir Diperbarui</SortableHeader></TableHead>
+                  )}
+                  {columnVisibility.name && (
+                    <TableHead><SortableHeader field="name">Nama Pemilik</SortableHeader></TableHead>
+                  )}
+                  {columnVisibility.email && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Email</TableHead>
+                  )}
+                  {columnVisibility.phone && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">No. Telepon</TableHead>
+                  )}
+                  {columnVisibility.address && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Alamat</TableHead>
+                  )}
+                  {columnVisibility.photo && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Foto</TableHead>
+                  )}
+                  {columnVisibility.certificates_count && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Jumlah Sertifikat</TableHead>
+                  )}
+                  {columnVisibility.awards_count && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Jumlah Penghargaan</TableHead>
+                  )}
+                  {columnVisibility.organizations_count && (
+                    <TableHead className="uppercase text-xs font-medium tracking-wide">Organisasi</TableHead>
+                  )}
+                  <TableHead className="w-[60px]"></TableHead>
                 </TableRow>
-              ) : (
-                paginatedCVs.map((cv, index) => (
-                  <TableRow
-                    key={cv.id}
-                    className={cn(
-                      index % 2 === 0 ? "bg-background" : "bg-muted/20"
-                    )}
-                  >
-                    {columnVisibility.name && (
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={cv.photo} />
-                            <AvatarFallback className="bg-primary/10 text-primary">
-                              {cv.name.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="font-medium">{cv.name}</span>
-                        </div>
-                      </TableCell>
-                    )}
-                    {columnVisibility.headline && (
-                      <TableCell className="max-w-[200px] truncate">{cv.headline}</TableCell>
-                    )}
-                    {columnVisibility.email && (
-                      <TableCell>{cv.email}</TableCell>
-                    )}
-                    {columnVisibility.phone && (
-                      <TableCell>{cv.phone}</TableCell>
-                    )}
-                    {columnVisibility.address && (
-                      <TableCell className="max-w-[150px] truncate">{cv.address}</TableCell>
-                    )}
-                    {columnVisibility.educations && (
-                      <TableCell>
-                        {cv.educations.length > 0 ? (
-                          <Badge variant="secondary">{cv.educations.length} pendidikan</Badge>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">-</span>
-                        )}
-                      </TableCell>
-                    )}
-                    {columnVisibility.experiences && (
-                      <TableCell>
-                        {cv.experiences.length > 0 ? (
-                          <Badge variant="secondary">{cv.experiences.length} pengalaman</Badge>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">-</span>
-                        )}
-                      </TableCell>
-                    )}
-                    {columnVisibility.skills && (
-                      <TableCell>
-                        {cv.skills.length > 0 ? (
-                          <Badge variant="secondary">{cv.skills.length} keahlian</Badge>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">-</span>
-                        )}
-                      </TableCell>
-                    )}
-                    {columnVisibility.created_at && (
-                      <TableCell className="text-muted-foreground">
-                        {format(new Date(cv.created_at), "dd MMM yyyy")}
-                      </TableCell>
-                    )}
-                    {columnVisibility.updated_at && (
-                      <TableCell className="text-muted-foreground">
-                        {format(new Date(cv.updated_at), "dd MMM yyyy")}
-                      </TableCell>
-                    )}
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <span className="sr-only">Menu</span>
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <circle cx="12" cy="12" r="1" />
-                              <circle cx="12" cy="5" r="1" />
-                              <circle cx="12" cy="19" r="1" />
-                            </svg>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="z-50 bg-popover">
-                          <DropdownMenuItem onClick={() => navigate(`/cvs/${cv.id}`)}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            Lihat
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/cvs/${cv.id}/edit`)}>
-                            <Pencil className="h-4 w-4 mr-2" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDuplicate(cv)}>
-                            <Copy className="h-4 w-4 mr-2" />
-                            Duplikasi
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>
-                              <Download className="h-4 w-4 mr-2" />
-                              Download
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuSubContent className="bg-popover">
-                              <DropdownMenuItem onClick={() => handleDownload(cv, "docx")}>
-                                <FileText className="h-4 w-4 mr-2" />
-                                Word (.docx)
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleDownload(cv, "pdf")}
-                                className="text-muted-foreground"
-                              >
-                                <FileText className="h-4 w-4 mr-2" />
-                                PDF (Segera Hadir)
-                              </DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                          </DropdownMenuSub>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleDelete(cv.id)}
-                            className="text-destructive focus:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Hapus
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+              </TableHeader>
+              <TableBody>
+                {paginatedCVs.length === 0 ? (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={15} className="text-center py-16 text-muted-foreground">
+                      <div className="flex flex-col items-center gap-2">
+                        <FileText className="h-10 w-10 text-muted-foreground/50" />
+                        <p className="text-base font-medium">Tidak ada CV</p>
+                        <p className="text-sm">Mulai buat CV pertama Anda</p>
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  paginatedCVs.map((cv, index) => {
+                    const latestExp = getLatestExperience(cv);
+                    const latestEdu = getLatestEducation(cv);
+
+                    return (
+                      <TableRow
+                        key={cv.id}
+                        className={cn(
+                          index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                        )}
+                      >
+                        {columnVisibility.headline && (
+                          <TableCell className="font-medium max-w-[200px]">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="block truncate">{cv.headline}</span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{cv.headline}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TableCell>
+                        )}
+                        {columnVisibility.about && (
+                          <TableCell className="max-w-[200px]">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="block truncate text-muted-foreground">
+                                  {cv.about || "-"}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-[300px]">
+                                <p>{cv.about || "-"}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TableCell>
+                        )}
+                        {columnVisibility.latest_experience && (
+                          <TableCell>
+                            {latestExp ? (
+                              <div className="text-sm">
+                                <p className="font-medium truncate max-w-[150px]">{latestExp.job_title}</p>
+                                <p className="text-muted-foreground text-xs truncate max-w-[150px]">{latestExp.company_name}</p>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )}
+                          </TableCell>
+                        )}
+                        {columnVisibility.latest_education && (
+                          <TableCell>
+                            {latestEdu ? (
+                              <div className="text-sm">
+                                <p className="font-medium truncate max-w-[150px]">
+                                  {DEGREE_OPTIONS.find(d => d.value === latestEdu.degree)?.label || latestEdu.degree}
+                                </p>
+                                <p className="text-muted-foreground text-xs truncate max-w-[150px]">{latestEdu.school_name}</p>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">-</span>
+                            )}
+                          </TableCell>
+                        )}
+                        {columnVisibility.skills_count && (
+                          <TableCell>
+                            <Badge variant="secondary">{cv.skills?.length || 0}</Badge>
+                          </TableCell>
+                        )}
+                        {columnVisibility.updated_at && (
+                          <TableCell className="text-muted-foreground">
+                            {format(new Date(cv.updated_at), "dd MMM yyyy")}
+                          </TableCell>
+                        )}
+                        {columnVisibility.name && (
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-7 w-7">
+                                <AvatarImage src={cv.photo} />
+                                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                                  {cv.name.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span>{cv.name}</span>
+                            </div>
+                          </TableCell>
+                        )}
+                        {columnVisibility.email && (
+                          <TableCell>{cv.email}</TableCell>
+                        )}
+                        {columnVisibility.phone && (
+                          <TableCell>{cv.phone}</TableCell>
+                        )}
+                        {columnVisibility.address && (
+                          <TableCell className="max-w-[150px] truncate">{cv.address}</TableCell>
+                        )}
+                        {columnVisibility.photo && (
+                          <TableCell>
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={cv.photo} />
+                              <AvatarFallback className="bg-primary/10 text-primary">
+                                <User className="h-4 w-4" />
+                              </AvatarFallback>
+                            </Avatar>
+                          </TableCell>
+                        )}
+                        {columnVisibility.certificates_count && (
+                          <TableCell>
+                            <Badge variant="secondary">{cv.certificates?.length || 0}</Badge>
+                          </TableCell>
+                        )}
+                        {columnVisibility.awards_count && (
+                          <TableCell>
+                            <Badge variant="secondary">{cv.awards?.length || 0}</Badge>
+                          </TableCell>
+                        )}
+                        {columnVisibility.organizations_count && (
+                          <TableCell>
+                            <Badge variant="secondary">{cv.organizations?.length || 0}</Badge>
+                          </TableCell>
+                        )}
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <span className="sr-only">Menu</span>
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <circle cx="12" cy="12" r="1" />
+                                  <circle cx="12" cy="5" r="1" />
+                                  <circle cx="12" cy="19" r="1" />
+                                </svg>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="z-50 bg-popover">
+                              <DropdownMenuItem onClick={() => navigate(`/cvs/${cv.id}`)}>
+                                <Eye className="h-4 w-4 mr-2" />
+                                Lihat
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => navigate(`/cvs/${cv.id}/edit`)}>
+                                <Pencil className="h-4 w-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDuplicate(cv)}>
+                                <Copy className="h-4 w-4 mr-2" />
+                                Duplikasi
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuSub>
+                                <DropdownMenuSubTrigger>
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Download
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuSubContent className="bg-popover">
+                                  <DropdownMenuItem onClick={() => handleDownload(cv, "docx")}>
+                                    <FileText className="h-4 w-4 mr-2" />
+                                    Word (.docx)
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleDownload(cv, "pdf")}
+                                    className="text-muted-foreground"
+                                  >
+                                    <FileText className="h-4 w-4 mr-2" />
+                                    PDF (Segera Hadir)
+                                  </DropdownMenuItem>
+                                </DropdownMenuSubContent>
+                              </DropdownMenuSub>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => handleDelete(cv.id)}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Hapus
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </TooltipProvider>
         </div>
 
         {/* Pagination */}
@@ -471,17 +569,14 @@ export default function CVs() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Hapus CV?</AlertDialogTitle>
+            <AlertDialogTitle>Hapus CV</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. CV akan dihapus secara permanen.
+              Apakah Anda yakin ingin menghapus CV ini? Tindakan ini tidak dapat dibatalkan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Hapus
             </AlertDialogAction>
           </AlertDialogFooter>
