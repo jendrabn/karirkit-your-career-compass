@@ -212,7 +212,7 @@ export default function Applications() {
           value={app[field] as string}
           onValueChange={(val) => updateApplication(app.id, field, val)}
         >
-          <SelectTrigger className="h-8 w-auto min-w-[90px] text-sm border-transparent bg-transparent hover:bg-muted/60 focus:bg-muted/60">
+          <SelectTrigger className="h-8 w-auto min-w-[100px] text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="z-50 bg-popover">
@@ -235,14 +235,14 @@ export default function Applications() {
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleBlur()}
           autoFocus
-          className="h-8 w-auto min-w-[100px] text-sm"
+          className="h-8 w-auto min-w-[100px] text-xs"
         />
       );
     }
 
     return (
       <span
-        className="cursor-pointer hover:bg-muted/60 px-2 py-1 rounded-md text-sm transition-colors"
+        className="cursor-pointer hover:bg-muted px-2 py-1 rounded text-xs"
         onClick={() => setIsEditing(true)}
       >
         {String(app[field]) || "-"}
@@ -289,53 +289,39 @@ export default function Applications() {
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 {columnVisibility.company_name && (
-                  <TableHead>
-                    <SortableHeader field="company_name">PERUSAHAAN</SortableHeader>
-                  </TableHead>
-                )}
-                {columnVisibility.date && (
-                  <TableHead>
-                    <SortableHeader field="date">TANGGAL</SortableHeader>
-                  </TableHead>
+                  <TableHead><SortableHeader field="company_name">Perusahaan</SortableHeader></TableHead>
                 )}
                 {columnVisibility.position && (
-                  <TableHead>
-                    <SortableHeader field="position">POSISI</SortableHeader>
-                  </TableHead>
+                  <TableHead><SortableHeader field="position">Posisi</SortableHeader></TableHead>
                 )}
-                {columnVisibility.job_source && <TableHead>SUMBER</TableHead>}
-                {columnVisibility.job_type && <TableHead>TIPE</TableHead>}
-                {columnVisibility.work_system && <TableHead>SISTEM</TableHead>}
-                {columnVisibility.salary_min && <TableHead>GAJI MIN</TableHead>}
-                {columnVisibility.salary_max && <TableHead>GAJI MAX</TableHead>}
-                {columnVisibility.location && <TableHead>LOKASI</TableHead>}
+                {columnVisibility.job_source && <TableHead>Sumber</TableHead>}
+                {columnVisibility.job_type && <TableHead>Tipe</TableHead>}
+                {columnVisibility.work_system && <TableHead>Sistem</TableHead>}
+                {columnVisibility.salary_min && <TableHead>Gaji Min</TableHead>}
+                {columnVisibility.salary_max && <TableHead>Gaji Max</TableHead>}
+                {columnVisibility.location && <TableHead>Lokasi</TableHead>}
+                {columnVisibility.date && (
+                  <TableHead><SortableHeader field="date">Tanggal</SortableHeader></TableHead>
+                )}
                 {columnVisibility.status && (
-                  <TableHead>
-                    <SortableHeader field="status">STATUS</SortableHeader>
-                  </TableHead>
+                  <TableHead><SortableHeader field="status">Status</SortableHeader></TableHead>
                 )}
                 {columnVisibility.result_status && (
-                  <TableHead>
-                    <SortableHeader field="result_status">HASIL</SortableHeader>
-                  </TableHead>
+                  <TableHead><SortableHeader field="result_status">Hasil</SortableHeader></TableHead>
                 )}
-                {columnVisibility.company_url && <TableHead>URL PERUSAHAAN</TableHead>}
-                {columnVisibility.contact_name && <TableHead>NAMA KONTAK</TableHead>}
-                {columnVisibility.contact_email && <TableHead>EMAIL KONTAK</TableHead>}
-                {columnVisibility.contact_phone && <TableHead>TELP KONTAK</TableHead>}
-                {columnVisibility.follow_up_date && <TableHead>FOLLOW UP</TableHead>}
-                {columnVisibility.follow_up_note && <TableHead>CATATAN FU</TableHead>}
-                {columnVisibility.job_url && <TableHead>URL LOWONGAN</TableHead>}
-                {columnVisibility.notes && <TableHead>CATATAN</TableHead>}
+                {columnVisibility.company_url && <TableHead>URL Perusahaan</TableHead>}
+                {columnVisibility.contact_name && <TableHead>Nama Kontak</TableHead>}
+                {columnVisibility.contact_email && <TableHead>Email Kontak</TableHead>}
+                {columnVisibility.contact_phone && <TableHead>Telp Kontak</TableHead>}
+                {columnVisibility.follow_up_date && <TableHead>Follow Up</TableHead>}
+                {columnVisibility.follow_up_note && <TableHead>Catatan FU</TableHead>}
+                {columnVisibility.job_url && <TableHead>URL Lowongan</TableHead>}
+                {columnVisibility.notes && <TableHead>Catatan</TableHead>}
                 {columnVisibility.created_at && (
-                  <TableHead>
-                    <SortableHeader field="created_at">DIBUAT</SortableHeader>
-                  </TableHead>
+                  <TableHead><SortableHeader field="created_at">Dibuat</SortableHeader></TableHead>
                 )}
                 {columnVisibility.updated_at && (
-                  <TableHead>
-                    <SortableHeader field="updated_at">DIPERBARUI</SortableHeader>
-                  </TableHead>
+                  <TableHead><SortableHeader field="updated_at">Diperbarui</SortableHeader></TableHead>
                 )}
                 <TableHead className="w-[60px]"></TableHead>
               </TableRow>
@@ -352,16 +338,16 @@ export default function Applications() {
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedApplications.map((app) => (
-                  <TableRow key={app.id}>
+                paginatedApplications.map((app, index) => (
+                  <TableRow 
+                    key={app.id}
+                    className={cn(
+                      index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                    )}
+                  >
                     {columnVisibility.company_name && (
                       <TableCell className="font-medium">
                         <EditableCell app={app} field="company_name" />
-                      </TableCell>
-                    )}
-                    {columnVisibility.date && (
-                      <TableCell className="text-muted-foreground">
-                        {format(new Date(app.date), "dd MMM yyyy")}
                       </TableCell>
                     )}
                     {columnVisibility.position && (
@@ -384,6 +370,9 @@ export default function Applications() {
                     )}
                     {columnVisibility.location && (
                       <TableCell><EditableCell app={app} field="location" /></TableCell>
+                    )}
+                    {columnVisibility.date && (
+                      <TableCell className="text-muted-foreground">{format(new Date(app.date), "dd MMM yyyy")}</TableCell>
                     )}
                     {columnVisibility.status && (
                       <TableCell><EditableCell app={app} field="status" type="select" /></TableCell>

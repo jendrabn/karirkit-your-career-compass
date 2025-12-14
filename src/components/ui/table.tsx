@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
     <div className="relative w-full overflow-auto">
-      <table ref={ref} className={cn("w-full caption-bottom", className)} {...props} />
+      <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   ),
 );
@@ -13,7 +13,7 @@ Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn("bg-muted/40 [&_tr]:border-b", className)} {...props} />
+    <thead ref={ref} className={cn("bg-muted/30 [&_tr]:border-b", className)} {...props} />
   ),
 );
 TableHeader.displayName = "TableHeader";
@@ -37,7 +37,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
     <tr
       ref={ref}
       className={cn(
-        "border-b border-border/40 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b border-border/50 transition-colors data-[state=selected]:bg-muted hover:bg-muted/30",
         className
       )}
       {...props}
@@ -51,7 +51,7 @@ const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<
     <th
       ref={ref}
       className={cn(
-        "h-11 px-4 text-left align-middle font-semibold text-muted-foreground text-xs uppercase tracking-wider [&:has([role=checkbox])]:pr-0",
+        "h-11 px-4 text-left align-middle font-medium text-muted-foreground text-sm [&:has([role=checkbox])]:pr-0",
         className,
       )}
       {...props}
