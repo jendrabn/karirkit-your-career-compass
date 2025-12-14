@@ -76,6 +76,7 @@ export interface Organization {
 export interface CV {
   id: string;
   user_id: string;
+  template_id?: string;
   name: string;
   headline: string;
   email: string;

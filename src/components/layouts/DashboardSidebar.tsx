@@ -1,10 +1,9 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronUp, User, Lock, LogOut, FolderOpen } from "lucide-react";
-import logo from "@/assets/karirkit-logo.png";
+import { LayoutDashboard, FileText, ChevronDown, User, Lock, LogOut, FolderOpen } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+  SidebarHeader,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
@@ -69,11 +68,47 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r">
-      <SidebarContent className="pt-6">
-        <div className="px-4 mb-6 group-data-[state=collapsed]:hidden">
-          <img src={logo} alt="KarirKit Logo" className="h-8 w-auto" />
-        </div>
+      <SidebarHeader className="border-b p-4 group-data-[state=collapsed]:p-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center justify-center gap-3 w-full p-2 rounded-lg hover:bg-muted transition-colors group-data-[state=expanded]:justify-start">
+              <Avatar className="h-10 w-10 shrink-0 group-data-[state=collapsed]:h-8 group-data-[state=collapsed]:w-8">
+                <AvatarImage src={mockUser.avatar} />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {mockUser.name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 text-left group-data-[state=collapsed]:hidden">
+                <p className="text-sm font-medium">{mockUser.name}</p>
+                <p className="text-xs text-muted-foreground">{mockUser.email}</p>
+              </div>
+              <ChevronDown className="h-4 w-4 text-muted-foreground group-data-[state=collapsed]:hidden" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-56 bg-popover z-50">
+            <div className="px-3 py-2">
+              <p className="text-sm font-medium">{mockUser.name}</p>
+              <p className="text-xs text-muted-foreground">{mockUser.email}</p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate("/profile")}>
+              <User className="h-4 w-4 mr-2" />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/change-password")}>
+              <Lock className="h-4 w-4 mr-2" />
+              Change Password
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate("/auth/login")} className="text-destructive">
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarHeader>
 
+      <SidebarContent className="pt-4">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -101,46 +136,6 @@ export function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="border-t p-4 group-data-[state=collapsed]:p-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center justify-center gap-3 w-full p-2 rounded-lg hover:bg-muted transition-colors group-data-[state=expanded]:justify-start">
-              <Avatar className="h-10 w-10 shrink-0 group-data-[state=collapsed]:h-8 group-data-[state=collapsed]:w-8">
-                <AvatarImage src={mockUser.avatar} />
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {mockUser.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 text-left group-data-[state=collapsed]:hidden">
-                <p className="text-sm font-medium">{mockUser.name}</p>
-                <p className="text-xs text-muted-foreground">{mockUser.email}</p>
-              </div>
-              <ChevronUp className="h-4 w-4 text-muted-foreground group-data-[state=collapsed]:hidden" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
-            <div className="px-3 py-2">
-              <p className="text-sm font-medium">{mockUser.name}</p>
-              <p className="text-xs text-muted-foreground">{mockUser.email}</p>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate("/profile")}>
-              <User className="h-4 w-4 mr-2" />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/change-password")}>
-              <Lock className="h-4 w-4 mr-2" />
-              Change Password
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate("/auth/login")} className="text-destructive">
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }
