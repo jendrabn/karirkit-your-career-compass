@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronUp, User, Lock, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronUp, User, Lock, LogOut, FolderOpen } from "lucide-react";
 import logo from "@/assets/karirkit-logo.png";
 import {
   Sidebar,
@@ -31,6 +31,21 @@ const menuItems = [
     title: "Applications",
     url: "/applications",
     icon: FileText,
+  },
+  {
+    title: "Application Letter",
+    url: "/application-letters",
+    icon: FileText,
+  },
+  {
+    title: "CV",
+    url: "/cv",
+    icon: FileText,
+  },
+  {
+    title: "Portfolio",
+    url: "/portfolios",
+    icon: FolderOpen,
   },
 ];
 
