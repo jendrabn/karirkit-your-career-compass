@@ -173,11 +173,11 @@ export default function Applications() {
     <Button
       variant="ghost"
       size="sm"
-      className="-ml-3 h-8 data-[state=open]:bg-accent"
+      className="-ml-3 h-8 data-[state=open]:bg-accent uppercase text-xs font-medium tracking-wide text-muted-foreground hover:text-foreground"
       onClick={() => handleSort(field)}
     >
       {children}
-      <ArrowUpDown className="ml-2 h-4 w-4" />
+      <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 opacity-50" />
     </Button>
   );
 
