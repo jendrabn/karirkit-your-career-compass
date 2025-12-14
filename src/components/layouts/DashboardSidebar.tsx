@@ -55,7 +55,7 @@ export function DashboardSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r">
       <SidebarContent className="pt-6">
-        <div className="px-4 mb-6 group-data-[collapsible=icon]:px-2 group-data-[collapsible=icon]:hidden">
+        <div className="px-4 mb-6 group-data-[state=collapsed]:hidden">
           <h1 className="text-xl font-bold text-primary">KarirKit</h1>
         </div>
 
@@ -68,14 +68,14 @@ export function DashboardSidebar() {
                     <NavLink
                       to={item.url}
                       className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                        "flex items-center justify-center gap-3 px-3 py-3 rounded-lg transition-colors group-data-[state=expanded]:justify-start",
                         isActive(item.url)
                           ? "bg-primary text-primary-foreground"
                           : "hover:bg-muted text-foreground"
                       )}
                     >
                       <item.icon className="h-5 w-5 shrink-0" />
-                      <span className="font-medium">
+                      <span className="font-medium group-data-[state=collapsed]:hidden">
                         {item.title}
                       </span>
                     </NavLink>
@@ -87,21 +87,21 @@ export function DashboardSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t p-4 group-data-[collapsible=icon]:p-2">
+      <SidebarFooter className="border-t p-4 group-data-[state=collapsed]:p-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-muted transition-colors">
-              <Avatar className="h-10 w-10 shrink-0 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
+            <button className="flex items-center justify-center gap-3 w-full p-2 rounded-lg hover:bg-muted transition-colors group-data-[state=expanded]:justify-start">
+              <Avatar className="h-10 w-10 shrink-0 group-data-[state=collapsed]:h-8 group-data-[state=collapsed]:w-8">
                 <AvatarImage src={mockUser.avatar} />
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {mockUser.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 text-left group-data-[collapsible=icon]:hidden">
+              <div className="flex-1 text-left group-data-[state=collapsed]:hidden">
                 <p className="text-sm font-medium">{mockUser.name}</p>
                 <p className="text-xs text-muted-foreground">{mockUser.email}</p>
               </div>
-              <ChevronUp className="h-4 w-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
+              <ChevronUp className="h-4 w-4 text-muted-foreground group-data-[state=collapsed]:hidden" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
