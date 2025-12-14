@@ -23,6 +23,7 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -143,6 +144,8 @@ export default function Applications() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState<string | null>(null);
   const [activeStatFilter, setActiveStatFilter] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -277,6 +280,26 @@ export default function Applications() {
     }
   };
 
+  const handleSelectAll = () => {
+    if (selectedIds.length === paginatedApplications.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(paginatedApplications.map((app) => app.id));
+    }
+  };
+
+  const handleSelectOne = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const confirmBulkDelete = () => {
+    setApplications((prev) => prev.filter((app) => !selectedIds.includes(app.id)));
+    setSelectedIds([]);
+    setBulkDeleteDialogOpen(false);
+  };
+
   const handleStatClick = (filter: string) => {
     if (activeStatFilter === filter || filter === "total") {
       setActiveStatFilter(null);
@@ -408,6 +431,16 @@ export default function Applications() {
         </div>
 
         <div className="flex gap-2 flex-wrap">
+          {selectedIds.length > 0 && (
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={() => setBulkDeleteDialogOpen(true)}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Hapus ({selectedIds.length})
+            </Button>
+          )}
           {activeStatFilter && (
             <Button 
               variant="ghost" 
@@ -436,6 +469,12 @@ export default function Applications() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
+                <TableHead className="w-[40px]">
+                  <Checkbox 
+                    checked={paginatedApplications.length > 0 && selectedIds.length === paginatedApplications.length}
+                    onCheckedChange={handleSelectAll}
+                  />
+                </TableHead>
                 {columnVisibility.position && (
                   <TableHead><SortableHeader field="position">Posisi</SortableHeader></TableHead>
                 )}
@@ -484,7 +523,7 @@ export default function Applications() {
             <TableBody>
               {paginatedApplications.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={15} className="text-center py-16 text-muted-foreground">
+                  <TableCell colSpan={16} className="text-center py-16 text-muted-foreground">
                     <div className="flex flex-col items-center gap-2">
                       <Search className="h-10 w-10 text-muted-foreground/50" />
                       <p className="text-base font-medium">Tidak ada data lamaran</p>
@@ -497,9 +536,16 @@ export default function Applications() {
                   <TableRow 
                     key={app.id}
                     className={cn(
-                      index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                      index % 2 === 0 ? "bg-background" : "bg-muted/20",
+                      selectedIds.includes(app.id) && "bg-primary/5"
                     )}
                   >
+                    <TableCell>
+                      <Checkbox 
+                        checked={selectedIds.includes(app.id)}
+                        onCheckedChange={() => handleSelectOne(app.id)}
+                      />
+                    </TableCell>
                     {columnVisibility.position && (
                       <TableCell className="font-medium whitespace-nowrap">
                         <EditableCell app={app} field="position" />
@@ -717,6 +763,24 @@ export default function Applications() {
             <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus {selectedIds.length} Lamaran</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus {selectedIds.length} lamaran yang dipilih? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Hapus Semua
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

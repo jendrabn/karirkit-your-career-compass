@@ -26,6 +26,7 @@ import CVShow from "./pages/CVShow";
 import Portfolios from "./pages/Portfolios";
 import PortfolioCreate from "./pages/PortfolioCreate";
 import PortfolioEdit from "./pages/PortfolioEdit";
+import PortfolioShow from "./pages/PortfolioShow";
 import PortfolioList from "./pages/PortfolioList";
 import PortfolioDetail from "./pages/PortfolioDetail";
 import Profile from "./pages/Profile";
@@ -66,6 +67,7 @@ const App = () => (
           <Route path="/portfolios" element={<Portfolios />} />
           <Route path="/portfolios/create" element={<PortfolioCreate />} />
           <Route path="/portfolios/:id/edit" element={<PortfolioEdit />} />
+          <Route path="/portfolios/:id" element={<PortfolioShow />} />
           <Route path="/me/:username" element={<PortfolioList />} />
           <Route path="/me/:username/:id" element={<PortfolioDetail />} />
           <Route path="/profile" element={<Profile />} />

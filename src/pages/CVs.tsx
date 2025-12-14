@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -87,6 +88,8 @@ export default function CVs() {
   const [cvs, setCvs] = useState<CV[]>(mockCVs);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [cvToDelete, setCvToDelete] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -164,6 +167,27 @@ export default function CVs() {
     }
   };
 
+  const handleSelectAll = () => {
+    if (selectedIds.length === paginatedCVs.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(paginatedCVs.map((cv) => cv.id));
+    }
+  };
+
+  const handleSelectOne = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const confirmBulkDelete = () => {
+    setCvs((prev) => prev.filter((cv) => !selectedIds.includes(cv.id)));
+    setSelectedIds([]);
+    setBulkDeleteDialogOpen(false);
+    toast.success(`${selectedIds.length} CV berhasil dihapus`);
+  };
+
   const handleDuplicate = (cv: CV) => {
     const newCV: CV = {
       ...cv,
@@ -227,6 +251,16 @@ export default function CVs() {
         </div>
 
         <div className="flex gap-2 flex-wrap">
+          {selectedIds.length > 0 && (
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={() => setBulkDeleteDialogOpen(true)}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Hapus ({selectedIds.length})
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={() => setFilterModalOpen(true)}>
             <Filter className="h-4 w-4 mr-2" />
             Filter
@@ -246,6 +280,12 @@ export default function CVs() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
+                  <TableHead className="w-[40px]">
+                    <Checkbox 
+                      checked={paginatedCVs.length > 0 && selectedIds.length === paginatedCVs.length}
+                      onCheckedChange={handleSelectAll}
+                    />
+                  </TableHead>
                   {columnVisibility.headline && (
                     <TableHead className="uppercase text-xs font-medium tracking-wide">Headline / Posisi</TableHead>
                   )}
@@ -294,7 +334,7 @@ export default function CVs() {
               <TableBody>
                 {paginatedCVs.length === 0 ? (
                   <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={15} className="text-center py-16 text-muted-foreground">
+                    <TableCell colSpan={16} className="text-center py-16 text-muted-foreground">
                       <div className="flex flex-col items-center gap-2">
                         <FileText className="h-10 w-10 text-muted-foreground/50" />
                         <p className="text-base font-medium">Tidak ada CV</p>
@@ -311,9 +351,16 @@ export default function CVs() {
                       <TableRow
                         key={cv.id}
                         className={cn(
-                          index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                          index % 2 === 0 ? "bg-background" : "bg-muted/20",
+                          selectedIds.includes(cv.id) && "bg-primary/5"
                         )}
                       >
+                        <TableCell>
+                          <Checkbox 
+                            checked={selectedIds.includes(cv.id)}
+                            onCheckedChange={() => handleSelectOne(cv.id)}
+                          />
+                        </TableCell>
                         {columnVisibility.headline && (
                           <TableCell className="font-medium max-w-[200px]">
                             <Tooltip>
@@ -566,6 +613,24 @@ export default function CVs() {
             <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Dialog */}
+      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus {selectedIds.length} CV</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus {selectedIds.length} CV yang dipilih? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Hapus Semua
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

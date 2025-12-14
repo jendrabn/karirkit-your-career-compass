@@ -23,6 +23,7 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -95,6 +96,8 @@ export default function ApplicationLetters() {
   const [letters, setLetters] = useState<ApplicationLetter[]>(mockApplicationLetters);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [letterToDelete, setLetterToDelete] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -176,6 +179,27 @@ export default function ApplicationLetters() {
     }
   };
 
+  const handleSelectAll = () => {
+    if (selectedIds.length === paginatedLetters.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(paginatedLetters.map((letter) => letter.id));
+    }
+  };
+
+  const handleSelectOne = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const confirmBulkDelete = () => {
+    setLetters((prev) => prev.filter((letter) => !selectedIds.includes(letter.id)));
+    setSelectedIds([]);
+    setBulkDeleteDialogOpen(false);
+    toast.success(`${selectedIds.length} surat lamaran berhasil dihapus`);
+  };
+
   const handleDuplicate = (letter: ApplicationLetter) => {
     const newLetter: ApplicationLetter = {
       ...letter,
@@ -232,6 +256,16 @@ export default function ApplicationLetters() {
         </div>
 
         <div className="flex gap-2 flex-wrap">
+          {selectedIds.length > 0 && (
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={() => setBulkDeleteDialogOpen(true)}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Hapus ({selectedIds.length})
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={() => setFilterModalOpen(true)}>
             <Filter className="h-4 w-4 mr-2" />
             Filter
@@ -251,6 +285,12 @@ export default function ApplicationLetters() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
+                  <TableHead className="w-[40px]">
+                    <Checkbox 
+                      checked={paginatedLetters.length > 0 && selectedIds.length === paginatedLetters.length}
+                      onCheckedChange={handleSelectAll}
+                    />
+                  </TableHead>
                   {columnVisibility.subject && (
                     <TableHead><SortableHeader field="subject">Subjek</SortableHeader></TableHead>
                   )}
@@ -293,7 +333,7 @@ export default function ApplicationLetters() {
               <TableBody>
                 {paginatedLetters.length === 0 ? (
                   <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={13} className="text-center py-16 text-muted-foreground">
+                    <TableCell colSpan={14} className="text-center py-16 text-muted-foreground">
                       <div className="flex flex-col items-center gap-2">
                         <FileText className="h-10 w-10 text-muted-foreground/50" />
                         <p className="text-base font-medium">Tidak ada surat lamaran</p>
@@ -306,9 +346,16 @@ export default function ApplicationLetters() {
                     <TableRow 
                       key={letter.id}
                       className={cn(
-                        index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                        index % 2 === 0 ? "bg-background" : "bg-muted/20",
+                        selectedIds.includes(letter.id) && "bg-primary/5"
                       )}
                     >
+                      <TableCell>
+                        <Checkbox 
+                          checked={selectedIds.includes(letter.id)}
+                          onCheckedChange={() => handleSelectOne(letter.id)}
+                        />
+                      </TableCell>
                       {columnVisibility.subject && (
                         <TableCell className="max-w-[200px]">
                           <Tooltip>
@@ -502,6 +549,24 @@ export default function ApplicationLetters() {
             <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Delete Dialog */}
+      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus {selectedIds.length} Surat Lamaran</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus {selectedIds.length} surat lamaran yang dipilih? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Hapus Semua
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

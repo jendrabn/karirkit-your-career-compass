@@ -65,13 +65,7 @@ type SortField = "created_at" | "updated_at" | "year" | "month" | "title";
 type SortOrder = "asc" | "desc";
 
 const getProjectTypeBadgeVariant = (type: string) => {
-  const variants: Record<string, string> = {
-    work: "default",
-    freelance: "secondary",
-    personal: "outline",
-    academic: "destructive",
-  };
-  return variants[type] || "default";
+  return "secondary"; // Consistent styling for all project types
 };
 
 const monthNames = [
@@ -480,7 +474,7 @@ export default function Portfolios() {
       )}
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {filteredAndSortedPortfolios.length > 0 && (
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">Tampilkan</span>
@@ -494,7 +488,7 @@ export default function Portfolios() {
               <SelectTrigger className="w-[70px] h-8">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-50 bg-popover">
                 <SelectItem value="6">6</SelectItem>
                 <SelectItem value="12">12</SelectItem>
                 <SelectItem value="24">24</SelectItem>
@@ -526,13 +520,13 @@ export default function Portfolios() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="px-3 text-sm">
-              {currentPage} / {totalPages}
+              Halaman {currentPage} dari {totalPages || 1}
             </span>
             <Button
               variant="outline"
               size="icon"
               className="h-8 w-8"
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages === 0}
               onClick={() => setCurrentPage(currentPage + 1)}
             >
               <ChevronRight className="h-4 w-4" />
@@ -541,7 +535,7 @@ export default function Portfolios() {
               variant="outline"
               size="icon"
               className="h-8 w-8"
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages === 0}
               onClick={() => setCurrentPage(totalPages)}
             >
               <ChevronsRight className="h-4 w-4" />
