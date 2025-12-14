@@ -19,6 +19,7 @@ import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -56,12 +57,62 @@ import { ColumnToggle, ColumnVisibility, defaultColumnVisibility } from "@/compo
 import { mockApplications } from "@/data/mockApplications";
 import {
   Application,
+  ApplicationStatus,
+  JobType,
+  WorkSystem,
+  ResultStatus,
   JOB_TYPE_OPTIONS,
   WORK_SYSTEM_OPTIONS,
   STATUS_OPTIONS,
   RESULT_STATUS_OPTIONS,
 } from "@/types/application";
 import { cn } from "@/lib/utils";
+
+// Helper functions to get badge variants
+const getJobTypeBadgeVariant = (jobType: JobType) => {
+  const variants: Record<JobType, "fullTime" | "partTime" | "contract" | "internship" | "freelance"> = {
+    full_time: "fullTime",
+    part_time: "partTime",
+    contract: "contract",
+    internship: "internship",
+    freelance: "freelance",
+  };
+  return variants[jobType];
+};
+
+const getWorkSystemBadgeVariant = (workSystem: WorkSystem) => {
+  const variants: Record<WorkSystem, "onsite" | "remote" | "hybrid"> = {
+    onsite: "onsite",
+    remote: "remote",
+    hybrid: "hybrid",
+  };
+  return variants[workSystem];
+};
+
+const getResultStatusBadgeVariant = (resultStatus: ResultStatus) => {
+  const variants: Record<ResultStatus, "pending" | "passed" | "failed"> = {
+    pending: "pending",
+    passed: "passed",
+    failed: "failed",
+  };
+  return variants[resultStatus];
+};
+
+const getStatusBadgeVariant = (status: ApplicationStatus) => {
+  const screeningStatuses = ["administration_screening", "hr_screening"];
+  const testStatuses = ["online_test", "psychology_test", "technical_test", "hr_test"];
+  const interviewStatuses = ["user_interview", "final_interview"];
+  
+  if (status === "draft") return "draft";
+  if (status === "submitted") return "submitted";
+  if (screeningStatuses.includes(status)) return "screening";
+  if (testStatuses.includes(status)) return "test";
+  if (interviewStatuses.includes(status)) return "interview";
+  if (status === "offering" || status === "mcu" || status === "onboarding") return "offering";
+  if (status === "accepted") return "accepted";
+  if (status === "rejected") return "rejected";
+  return "default";
+};
 
 type SortField = "date" | "created_at" | "updated_at" | "company_name" | "position" | "status" | "result_status";
 type SortOrder = "asc" | "desc";
@@ -207,13 +258,27 @@ export default function Applications() {
         field === "status" ? STATUS_OPTIONS :
         RESULT_STATUS_OPTIONS;
 
+      const currentValue = app[field] as string;
+      const currentLabel = options.find(opt => opt.value === currentValue)?.label || currentValue;
+      
+      // Get badge variant based on field type
+      const getBadgeVariant = () => {
+        if (field === "job_type") return getJobTypeBadgeVariant(currentValue as JobType);
+        if (field === "work_system") return getWorkSystemBadgeVariant(currentValue as WorkSystem);
+        if (field === "result_status") return getResultStatusBadgeVariant(currentValue as ResultStatus);
+        if (field === "status") return getStatusBadgeVariant(currentValue as ApplicationStatus);
+        return "default";
+      };
+
       return (
         <Select
-          value={app[field] as string}
+          value={currentValue}
           onValueChange={(val) => updateApplication(app.id, field, val)}
         >
-          <SelectTrigger className="h-8 w-auto min-w-[100px] text-xs">
-            <SelectValue />
+          <SelectTrigger className="h-auto w-auto min-w-[100px] border-0 bg-transparent p-0 shadow-none focus:ring-0">
+            <Badge variant={getBadgeVariant() as any} className="cursor-pointer">
+              {currentLabel}
+            </Badge>
           </SelectTrigger>
           <SelectContent className="z-50 bg-popover">
             {options.map((opt) => (
