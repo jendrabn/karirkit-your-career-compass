@@ -323,7 +323,7 @@ export default function Applications() {
                 {columnVisibility.updated_at && (
                   <TableHead><SortableHeader field="updated_at">Diperbarui</SortableHeader></TableHead>
                 )}
-                <TableHead className="w-[80px] text-center">Aksi</TableHead>
+                <TableHead className="w-[60px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
