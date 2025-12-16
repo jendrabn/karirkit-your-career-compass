@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, User, Lock, LogOut, FolderOpen } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Plus, Tag } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +19,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -49,6 +55,12 @@ const menuItems = [
   },
 ];
 
+const blogMenuItems = [
+  { title: "Semua Blog", url: "/blogs", icon: BookOpen },
+  { title: "Buat Blog", url: "/blogs/create", icon: Plus },
+  { title: "Kategori", url: "/categories", icon: Tag },
+];
+
 // Mock user data - replace with actual user data later
 const mockUser = {
   name: "Jendra Bayu",
@@ -61,6 +73,7 @@ export function DashboardSidebar() {
   const navigate = useNavigate();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const [blogOpen, setBlogOpen] = useState(location.pathname.startsWith("/blogs") || location.pathname === "/categories");
 
   const isActive = (path: string) => {
     if (path === "/applications") {
@@ -68,6 +81,8 @@ export function DashboardSidebar() {
     }
     return location.pathname === path;
   };
+
+  const isBlogActive = location.pathname.startsWith("/blogs") || location.pathname === "/categories";
 
   return (
     <Sidebar collapsible="icon" className="border-r">
@@ -145,6 +160,56 @@ export function DashboardSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              {/* Blog Menu with Dropdown */}
+              <SidebarMenuItem>
+                <Collapsible open={blogOpen} onOpenChange={setBlogOpen}>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      size="lg"
+                      tooltip="Blog"
+                      className={cn(
+                        "flex items-center rounded-lg transition-colors w-full",
+                        isCollapsed ? "justify-center px-2 py-3" : "gap-3 px-3 py-3",
+                        isBlogActive
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-muted text-foreground"
+                      )}
+                    >
+                      <BookOpen className="h-5 w-5 shrink-0" />
+                      {!isCollapsed && (
+                        <>
+                          <span className="font-medium flex-1 text-left">Blog</span>
+                          {blogOpen ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  {!isCollapsed && (
+                    <CollapsibleContent className="pl-6 space-y-1 mt-1">
+                      {blogMenuItems.map((item) => (
+                        <NavLink
+                          key={item.url}
+                          to={item.url}
+                          className={cn(
+                            "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors",
+                            location.pathname === item.url
+                              ? "bg-muted text-foreground font-medium"
+                              : "hover:bg-muted/50 text-muted-foreground"
+                          )}
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {item.title}
+                        </NavLink>
+                      ))}
+                    </CollapsibleContent>
+                  )}
+                </Collapsible>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
