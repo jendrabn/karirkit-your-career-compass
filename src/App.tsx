@@ -10,6 +10,11 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Blog from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
+import Blogs from "./pages/Blogs";
+import BlogCreate from "./pages/BlogCreate";
+import BlogEdit from "./pages/BlogEdit";
+import BlogShow from "./pages/BlogShow";
+import Categories from "./pages/Categories";
 import Dashboard from "./pages/Dashboard";
 import Applications from "./pages/Applications";
 import ApplicationCreate from "./pages/ApplicationCreate";
@@ -51,6 +56,11 @@ const App = () => (
           <Route path="/auth/verify-otp" element={<OTPVerification />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blogs/create" element={<BlogCreate />} />
+          <Route path="/blogs/:id/edit" element={<BlogEdit />} />
+          <Route path="/blogs/:id" element={<BlogShow />} />
+          <Route path="/categories" element={<Categories />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/applications" element={<Applications />} />
           <Route path="/applications/create" element={<ApplicationCreate />} />
