@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Plus, Tag } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Plus, Tag, FileStack, Shield } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +25,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 const menuItems = [
@@ -61,6 +62,11 @@ const blogMenuItems = [
   { title: "Kategori", url: "/categories", icon: Tag },
 ];
 
+const templateMenuItems = [
+  { title: "Semua Template", url: "/templates", icon: FileStack },
+  { title: "Buat Template", url: "/templates/create", icon: Plus },
+];
+
 // Mock user data - replace with actual user data later
 const mockUser = {
   name: "Jendra Bayu",
@@ -74,6 +80,7 @@ export function DashboardSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const [blogOpen, setBlogOpen] = useState(location.pathname.startsWith("/blogs") || location.pathname === "/categories");
+  const [templateOpen, setTemplateOpen] = useState(location.pathname.startsWith("/templates"));
 
   const isActive = (path: string) => {
     if (path === "/applications") {
@@ -83,6 +90,7 @@ export function DashboardSidebar() {
   };
 
   const isBlogActive = location.pathname.startsWith("/blogs") || location.pathname === "/categories";
+  const isTemplateActive = location.pathname.startsWith("/templates");
 
   return (
     <Sidebar collapsible="icon" className="border-r">
@@ -192,6 +200,70 @@ export function DashboardSidebar() {
                   {!isCollapsed && (
                     <CollapsibleContent className="pl-6 space-y-1 mt-1">
                       {blogMenuItems.map((item) => (
+                        <NavLink
+                          key={item.url}
+                          to={item.url}
+                          className={cn(
+                            "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors",
+                            location.pathname === item.url
+                              ? "bg-muted text-foreground font-medium"
+                              : "hover:bg-muted/50 text-muted-foreground"
+                          )}
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {item.title}
+                        </NavLink>
+                      ))}
+                    </CollapsibleContent>
+                  )}
+                </Collapsible>
+              </SidebarMenuItem>
+
+              {/* Admin Section Divider */}
+              {!isCollapsed && (
+                <div className="py-3 px-3">
+                  <div className="flex items-center gap-2">
+                    <Separator className="flex-1" />
+                    <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                      <Shield className="h-3 w-3" />
+                      ADMIN
+                    </span>
+                    <Separator className="flex-1" />
+                  </div>
+                </div>
+              )}
+
+              {/* Template Menu with Dropdown */}
+              <SidebarMenuItem>
+                <Collapsible open={templateOpen} onOpenChange={setTemplateOpen}>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      size="lg"
+                      tooltip="Template"
+                      className={cn(
+                        "flex items-center rounded-lg transition-colors w-full",
+                        isCollapsed ? "justify-center px-2 py-3" : "gap-3 px-3 py-3",
+                        isTemplateActive
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-muted text-foreground"
+                      )}
+                    >
+                      <FileStack className="h-5 w-5 shrink-0" />
+                      {!isCollapsed && (
+                        <>
+                          <span className="font-medium flex-1 text-left">Template</span>
+                          {templateOpen ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  {!isCollapsed && (
+                    <CollapsibleContent className="pl-6 space-y-1 mt-1">
+                      {templateMenuItems.map((item) => (
                         <NavLink
                           key={item.url}
                           to={item.url}
