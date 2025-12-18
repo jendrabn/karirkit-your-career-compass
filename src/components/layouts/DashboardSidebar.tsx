@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Plus, Tag, FileStack, Shield } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Circle } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -57,14 +57,14 @@ const menuItems = [
 ];
 
 const blogMenuItems = [
-  { title: "Semua Blog", url: "/blogs", icon: BookOpen },
-  { title: "Buat Blog", url: "/blogs/create", icon: Plus },
-  { title: "Kategori", url: "/categories", icon: Tag },
+  { title: "Semua Blog", url: "/blogs" },
+  { title: "Buat Blog", url: "/blogs/create" },
+  { title: "Kategori", url: "/categories" },
 ];
 
 const templateMenuItems = [
-  { title: "Semua Template", url: "/templates", icon: FileStack },
-  { title: "Buat Template", url: "/templates/create", icon: Plus },
+  { title: "Semua Template", url: "/templates" },
+  { title: "Buat Template", url: "/templates/create" },
 ];
 
 // Mock user data - replace with actual user data later
@@ -169,6 +169,41 @@ export function DashboardSidebar() {
                 </SidebarMenuItem>
               ))}
 
+              {/* Admin Section Divider */}
+              {!isCollapsed && (
+                <div className="py-3 px-3">
+                  <div className="flex items-center gap-2">
+                    <Separator className="flex-1" />
+                    <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                      <Shield className="h-3 w-3" />
+                      ADMIN
+                    </span>
+                    <Separator className="flex-1" />
+                  </div>
+                </div>
+              )}
+
+              {/* Admin Dashboard */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild size="lg" tooltip="Dashboard Admin">
+                  <NavLink
+                    to="/admin/dashboard"
+                    className={cn(
+                      "flex items-center rounded-lg transition-colors",
+                      isCollapsed ? "justify-center px-2 py-3" : "gap-3 px-3 py-3",
+                      isActive("/admin/dashboard")
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted text-foreground"
+                    )}
+                  >
+                    <LayoutDashboard className="h-5 w-5 shrink-0" />
+                    {!isCollapsed && (
+                      <span className="font-medium">Dashboard Admin</span>
+                    )}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
               {/* Blog Menu with Dropdown */}
               <SidebarMenuItem>
                 <Collapsible open={blogOpen} onOpenChange={setBlogOpen}>
@@ -198,19 +233,19 @@ export function DashboardSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   {!isCollapsed && (
-                    <CollapsibleContent className="pl-6 space-y-1 mt-1">
+                    <CollapsibleContent className="space-y-1 mt-1">
                       {blogMenuItems.map((item) => (
                         <NavLink
                           key={item.url}
                           to={item.url}
                           className={cn(
-                            "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors",
+                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
                             location.pathname === item.url
                               ? "bg-muted text-foreground font-medium"
                               : "hover:bg-muted/50 text-muted-foreground"
                           )}
                         >
-                          <item.icon className="h-4 w-4" />
+                          <Circle className="h-2 w-2 fill-current" />
                           {item.title}
                         </NavLink>
                       ))}
@@ -218,20 +253,6 @@ export function DashboardSidebar() {
                   )}
                 </Collapsible>
               </SidebarMenuItem>
-
-              {/* Admin Section Divider */}
-              {!isCollapsed && (
-                <div className="py-3 px-3">
-                  <div className="flex items-center gap-2">
-                    <Separator className="flex-1" />
-                    <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                      <Shield className="h-3 w-3" />
-                      ADMIN
-                    </span>
-                    <Separator className="flex-1" />
-                  </div>
-                </div>
-              )}
 
               {/* Template Menu with Dropdown */}
               <SidebarMenuItem>
@@ -262,19 +283,19 @@ export function DashboardSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   {!isCollapsed && (
-                    <CollapsibleContent className="pl-6 space-y-1 mt-1">
+                    <CollapsibleContent className="space-y-1 mt-1">
                       {templateMenuItems.map((item) => (
                         <NavLink
                           key={item.url}
                           to={item.url}
                           className={cn(
-                            "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors",
+                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
                             location.pathname === item.url
                               ? "bg-muted text-foreground font-medium"
                               : "hover:bg-muted/50 text-muted-foreground"
                           )}
                         >
-                          <item.icon className="h-4 w-4" />
+                          <Circle className="h-2 w-2 fill-current" />
                           {item.title}
                         </NavLink>
                       ))}

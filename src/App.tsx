@@ -20,6 +20,7 @@ import TemplateCreate from "./pages/TemplateCreate";
 import TemplateEdit from "./pages/TemplateEdit";
 import TemplateShow from "./pages/TemplateShow";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import Applications from "./pages/Applications";
 import ApplicationCreate from "./pages/ApplicationCreate";
 import ApplicationEdit from "./pages/ApplicationEdit";
@@ -70,6 +71,7 @@ const App = () => (
           <Route path="/templates/:id/edit" element={<TemplateEdit />} />
           <Route path="/templates/:id" element={<TemplateShow />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/applications" element={<Applications />} />
           <Route path="/applications/create" element={<ApplicationCreate />} />
           <Route path="/applications/:id/edit" element={<ApplicationEdit />} />
