@@ -1,4 +1,4 @@
-import { Blog, BlogCategory, BlogAuthor } from "@/types/blog";
+import { Blog, BlogCategory, BlogTag, BlogAuthor } from "@/types/blog";
 
 export const mockCategories: BlogCategory[] = [
   { id: 1, name: "Tips Karir", slug: "tips-karir", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-01-01T00:00:00Z" },
@@ -6,6 +6,17 @@ export const mockCategories: BlogCategory[] = [
   { id: 3, name: "Interview", slug: "interview", created_at: "2025-01-03T00:00:00Z", updated_at: "2025-01-03T00:00:00Z" },
   { id: 4, name: "Pengembangan Diri", slug: "pengembangan-diri", created_at: "2025-01-04T00:00:00Z", updated_at: "2025-01-04T00:00:00Z" },
   { id: 5, name: "Dunia Kerja", slug: "dunia-kerja", created_at: "2025-01-05T00:00:00Z", updated_at: "2025-01-05T00:00:00Z" },
+];
+
+export const mockTags: BlogTag[] = [
+  { id: 1, name: "Fresh Graduate", slug: "fresh-graduate", created_at: "2025-01-01T00:00:00Z", updated_at: "2025-01-01T00:00:00Z" },
+  { id: 2, name: "CV", slug: "cv", created_at: "2025-01-02T00:00:00Z", updated_at: "2025-01-02T00:00:00Z" },
+  { id: 3, name: "Surat Lamaran", slug: "surat-lamaran", created_at: "2025-01-03T00:00:00Z", updated_at: "2025-01-03T00:00:00Z" },
+  { id: 4, name: "Tips Interview", slug: "tips-interview", created_at: "2025-01-04T00:00:00Z", updated_at: "2025-01-04T00:00:00Z" },
+  { id: 5, name: "Remote Work", slug: "remote-work", created_at: "2025-01-05T00:00:00Z", updated_at: "2025-01-05T00:00:00Z" },
+  { id: 6, name: "Soft Skills", slug: "soft-skills", created_at: "2025-01-06T00:00:00Z", updated_at: "2025-01-06T00:00:00Z" },
+  { id: 7, name: "Produktivitas", slug: "produktivitas", created_at: "2025-01-07T00:00:00Z", updated_at: "2025-01-07T00:00:00Z" },
+  { id: 8, name: "Negosiasi Gaji", slug: "negosiasi-gaji", created_at: "2025-01-08T00:00:00Z", updated_at: "2025-01-08T00:00:00Z" },
 ];
 
 export const mockAuthors: BlogAuthor[] = [
@@ -28,6 +39,7 @@ export const mockBlogs: Blog[] = [
     status: "published",
     published_at: "2025-01-15T10:00:00Z",
     category: mockCategories[0],
+    tags: [mockTags[0], mockTags[1]],
     author: mockAuthors[0],
     created_at: "2025-01-14T08:00:00Z",
     updated_at: "2025-01-15T10:00:00Z",
@@ -45,6 +57,7 @@ export const mockBlogs: Blog[] = [
     status: "published",
     published_at: "2025-01-20T09:00:00Z",
     category: mockCategories[2],
+    tags: [mockTags[3], mockTags[5]],
     author: mockAuthors[1],
     created_at: "2025-01-19T14:00:00Z",
     updated_at: "2025-01-20T09:00:00Z",
@@ -62,6 +75,7 @@ export const mockBlogs: Blog[] = [
     status: "draft",
     published_at: null,
     category: mockCategories[1],
+    tags: [mockTags[2], mockTags[0]],
     author: mockAuthors[2],
     created_at: "2025-01-22T11:00:00Z",
     updated_at: "2025-01-22T11:00:00Z",
@@ -79,6 +93,7 @@ export const mockBlogs: Blog[] = [
     status: "scheduled",
     published_at: "2025-02-01T08:00:00Z",
     category: mockCategories[4],
+    tags: [mockTags[6], mockTags[4]],
     author: mockAuthors[0],
     created_at: "2025-01-25T16:00:00Z",
     updated_at: "2025-01-26T10:00:00Z",
@@ -96,6 +111,7 @@ export const mockBlogs: Blog[] = [
     status: "archived",
     published_at: "2024-12-01T07:00:00Z",
     category: mockCategories[3],
+    tags: [mockTags[5], mockTags[0]],
     author: mockAuthors[1],
     created_at: "2024-11-28T09:00:00Z",
     updated_at: "2025-01-10T14:00:00Z",

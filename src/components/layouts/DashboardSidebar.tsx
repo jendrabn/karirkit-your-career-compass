@@ -60,6 +60,7 @@ const blogMenuItems = [
   { title: "Semua Blog", url: "/blogs" },
   { title: "Buat Blog", url: "/blogs/create" },
   { title: "Kategori", url: "/categories" },
+  { title: "Tag", url: "/tags" },
 ];
 
 const templateMenuItems = [
@@ -79,7 +80,7 @@ export function DashboardSidebar() {
   const navigate = useNavigate();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const [blogOpen, setBlogOpen] = useState(location.pathname.startsWith("/blogs") || location.pathname === "/categories");
+  const [blogOpen, setBlogOpen] = useState(location.pathname.startsWith("/blogs") || location.pathname === "/categories" || location.pathname === "/tags");
   const [templateOpen, setTemplateOpen] = useState(location.pathname.startsWith("/templates"));
 
   const isActive = (path: string) => {
@@ -89,7 +90,7 @@ export function DashboardSidebar() {
     return location.pathname === path;
   };
 
-  const isBlogActive = location.pathname.startsWith("/blogs") || location.pathname === "/categories";
+  const isBlogActive = location.pathname.startsWith("/blogs") || location.pathname === "/categories" || location.pathname === "/tags";
   const isTemplateActive = location.pathname.startsWith("/templates");
 
   return (

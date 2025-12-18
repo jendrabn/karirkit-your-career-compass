@@ -8,6 +8,14 @@ export interface BlogCategory {
   updated_at?: string;
 }
 
+export interface BlogTag {
+  id: number;
+  name: string;
+  slug: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface BlogAuthor {
   id: number;
   name: string;
@@ -27,6 +35,7 @@ export interface Blog {
   status: BlogStatus;
   published_at?: string | null;
   category?: BlogCategory | null;
+  tags?: BlogTag[];
   author?: BlogAuthor | null;
   created_at: string;
   updated_at: string;

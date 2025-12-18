@@ -1,12 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import "@/styles/quill.css";
+import { X, Image as ImageIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
   Form,
   FormControl,
@@ -22,9 +26,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Card, CardContent } from "@/components/ui/card";
-import { Blog, BlogCategory, BlogAuthor, BLOG_STATUS_OPTIONS, BlogStatus } from "@/types/blog";
+import { Blog, BlogCategory, BlogTag, BlogAuthor, BLOG_STATUS_OPTIONS } from "@/types/blog";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const blogSchema = z.object({
   title: z.string().min(1, "Judul wajib diisi"),
@@ -37,6 +55,7 @@ const blogSchema = z.object({
   status: z.enum(["draft", "scheduled", "published", "archived"]),
   published_at: z.string().nullable().optional(),
   category_id: z.coerce.number().nullable().optional(),
+  tag_ids: z.array(z.number()).optional(),
   author_id: z.coerce.number().nullable().optional(),
 });
 
@@ -48,6 +67,7 @@ interface BlogFormProps {
   onCancel: () => void;
   isLoading?: boolean;
   categories: BlogCategory[];
+  tags: BlogTag[];
   authors: BlogAuthor[];
 }
 
@@ -57,9 +77,14 @@ export function BlogForm({
   onCancel,
   isLoading,
   categories,
+  tags,
   authors,
 }: BlogFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(initialData?.image || null);
+  const [selectedTags, setSelectedTags] = useState<number[]>(
+    initialData?.tags?.map(t => t.id) || []
+  );
+  const [tagPopoverOpen, setTagPopoverOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<BlogFormData>({
@@ -75,9 +100,24 @@ export function BlogForm({
       status: initialData?.status || "draft",
       published_at: initialData?.published_at || null,
       category_id: initialData?.category?.id || null,
+      tag_ids: initialData?.tags?.map(t => t.id) || [],
       author_id: initialData?.author?.id || null,
     },
   });
+
+  const quillModules = useMemo(() => ({
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ align: [] }],
+      ["link", "image"],
+      ["blockquote", "code-block"],
+      [{ color: [] }, { background: [] }],
+      ["clean"],
+    ],
+  }), []);
 
   const generateSlug = (title: string) => {
     return title
@@ -128,6 +168,23 @@ export function BlogForm({
       fileInputRef.current.value = "";
     }
   };
+
+  const handleTagToggle = (tagId: number) => {
+    const newSelectedTags = selectedTags.includes(tagId)
+      ? selectedTags.filter(id => id !== tagId)
+      : [...selectedTags, tagId];
+    
+    setSelectedTags(newSelectedTags);
+    form.setValue("tag_ids", newSelectedTags);
+  };
+
+  const removeTag = (tagId: number) => {
+    const newSelectedTags = selectedTags.filter(id => id !== tagId);
+    setSelectedTags(newSelectedTags);
+    form.setValue("tag_ids", newSelectedTags);
+  };
+
+  const selectedTagObjects = tags.filter(tag => selectedTags.includes(tag.id));
 
   return (
     <Form {...form}>
@@ -244,6 +301,68 @@ export function BlogForm({
                   </FormItem>
                 )}
               />
+            </div>
+
+            {/* Tags Selection */}
+            <div className="space-y-2">
+              <Label>Tags</Label>
+              <Popover open={tagPopoverOpen} onOpenChange={setTagPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={tagPopoverOpen}
+                    className="w-full justify-between"
+                  >
+                    {selectedTags.length > 0
+                      ? `${selectedTags.length} tag dipilih`
+                      : "Pilih tags..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Cari tag..." />
+                    <CommandList>
+                      <CommandEmpty>Tidak ada tag ditemukan.</CommandEmpty>
+                      <CommandGroup>
+                        {tags.map((tag) => (
+                          <CommandItem
+                            key={tag.id}
+                            value={tag.name}
+                            onSelect={() => handleTagToggle(tag.id)}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedTags.includes(tag.id) ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {tag.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              
+              {selectedTagObjects.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedTagObjects.map((tag) => (
+                    <Badge key={tag.id} variant="secondary" className="gap-1">
+                      {tag.name}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag.id)}
+                        className="ml-1 hover:text-destructive"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -386,11 +505,16 @@ export function BlogForm({
                 <FormItem>
                   <FormLabel>Konten *</FormLabel>
                   <FormControl>
-                    <Textarea
-                      {...field}
-                      placeholder="Tulis konten blog Anda di sini..."
-                      rows={15}
-                    />
+                    <div className="min-h-[400px]">
+                      <ReactQuill
+                        theme="snow"
+                        value={field.value}
+                        onChange={field.onChange}
+                        modules={quillModules}
+                        placeholder="Tulis konten blog Anda di sini..."
+                        className="h-[350px]"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

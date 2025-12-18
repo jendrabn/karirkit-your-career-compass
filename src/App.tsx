@@ -15,6 +15,7 @@ import BlogCreate from "./pages/BlogCreate";
 import BlogEdit from "./pages/BlogEdit";
 import BlogShow from "./pages/BlogShow";
 import Categories from "./pages/Categories";
+import Tags from "./pages/Tags";
 import Templates from "./pages/Templates";
 import TemplateCreate from "./pages/TemplateCreate";
 import TemplateEdit from "./pages/TemplateEdit";
@@ -66,6 +67,7 @@ const App = () => (
           <Route path="/blogs/:id/edit" element={<BlogEdit />} />
           <Route path="/blogs/:id" element={<BlogShow />} />
           <Route path="/categories" element={<Categories />} />
+          <Route path="/tags" element={<Tags />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/templates/create" element={<TemplateCreate />} />
           <Route path="/templates/:id/edit" element={<TemplateEdit />} />
