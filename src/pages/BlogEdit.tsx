@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { BlogForm, BlogFormData } from "@/components/blog/BlogForm";
-import { mockBlogs, mockCategories, mockAuthors } from "@/data/mockBlogs";
+import { mockBlogs, mockCategories, mockTags, mockAuthors } from "@/data/mockBlogs";
 import { toast } from "sonner";
 
 export default function BlogEdit() {
@@ -56,6 +56,7 @@ export default function BlogEdit() {
         onCancel={() => navigate("/blogs")}
         isLoading={isLoading}
         categories={mockCategories}
+        tags={mockTags}
         authors={mockAuthors}
       />
     </DashboardLayout>
