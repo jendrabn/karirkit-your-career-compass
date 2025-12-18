@@ -1,10 +1,12 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -13,6 +15,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,19 +40,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
   Plus,
   Search,
   Filter,
-  MoreHorizontal,
+  MoreVertical,
   Eye,
   Pencil,
   Trash2,
@@ -52,11 +52,17 @@ import {
   Crown,
   CheckCircle,
   XCircle,
+  FileStack,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { mockTemplates } from "@/data/mockTemplates";
 import { Template, getTemplateTypeLabel } from "@/types/template";
 import { TemplateFilterModal } from "@/components/templates/TemplateFilterModal";
 import { TemplateColumnToggle } from "@/components/templates/TemplateColumnToggle";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 type SortField = 'created_at' | 'updated_at' | 'name' | 'type';
@@ -72,6 +78,7 @@ export default function Templates() {
   const [templateToDelete, setTemplateToDelete] = useState<number | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [filters, setFilters] = useState<{
@@ -87,8 +94,6 @@ export default function Templates() {
     is_active: true,
     created_at: true,
   });
-
-  const itemsPerPage = 10;
 
   const filteredAndSortedTemplates = useMemo(() => {
     let result = [...templates];
@@ -135,10 +140,10 @@ export default function Templates() {
     return result;
   }, [templates, searchQuery, filters, sortField, sortOrder]);
 
-  const totalPages = Math.ceil(filteredAndSortedTemplates.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredAndSortedTemplates.length / perPage);
   const paginatedTemplates = filteredAndSortedTemplates.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    (currentPage - 1) * perPage,
+    currentPage * perPage
   );
 
   const handleSort = (field: SortField) => {
@@ -177,20 +182,18 @@ export default function Templates() {
     toast.success("Template berhasil diduplikasi");
   };
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedIds(paginatedTemplates.map((t) => t.id));
-    } else {
+  const handleSelectAll = () => {
+    if (selectedIds.length === paginatedTemplates.length) {
       setSelectedIds([]);
+    } else {
+      setSelectedIds(paginatedTemplates.map((t) => t.id));
     }
   };
 
-  const handleSelectOne = (id: number, checked: boolean) => {
-    if (checked) {
-      setSelectedIds([...selectedIds, id]);
-    } else {
-      setSelectedIds(selectedIds.filter((i) => i !== id));
-    }
+  const handleSelectOne = (id: number) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
 
   const confirmBulkDelete = () => {
@@ -205,6 +208,18 @@ export default function Templates() {
     setCurrentPage(1);
   };
 
+  const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="-ml-3 h-8 data-[state=open]:bg-accent uppercase text-xs font-medium tracking-wide text-muted-foreground hover:text-foreground"
+      onClick={() => handleSort(field)}
+    >
+      {children}
+      <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 opacity-50" />
+    </Button>
+  );
+
   return (
     <DashboardLayout>
       <PageHeader
@@ -212,61 +227,58 @@ export default function Templates() {
         subtitle="Kelola template CV dan Surat Lamaran."
       />
 
-      <div className="space-y-4">
-        {/* Actions Bar */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-between">
-          <div className="flex flex-1 gap-2">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Cari template..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <Button variant="outline" onClick={() => setFilterModalOpen(true)}>
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <TemplateColumnToggle
-              visibleColumns={visibleColumns}
-              onToggle={(column) =>
-                setVisibleColumns((prev) => ({
-                  ...prev,
-                  [column]: !prev[column],
-                }))
-              }
-            />
-          </div>
-          <div className="flex gap-2">
-            {selectedIds.length > 0 && (
-              <Button
-                variant="destructive"
-                onClick={() => setBulkDeleteDialogOpen(true)}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Hapus ({selectedIds.length})
-              </Button>
-            )}
-            <Button onClick={() => navigate("/templates/create")}>
-              <Plus className="h-4 w-4 mr-2" />
-              Buat Template
-            </Button>
-          </div>
+      {/* Actions Bar */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div className="relative w-full md:w-auto md:min-w-[300px] max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Cari nama atau slug template..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
         </div>
 
-        {/* Table */}
-        <div className="border rounded-lg overflow-hidden">
+        <div className="flex gap-2 flex-wrap">
+          {selectedIds.length > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setBulkDeleteDialogOpen(true)}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Hapus ({selectedIds.length})
+            </Button>
+          )}
+          <Button variant="outline" size="sm" onClick={() => setFilterModalOpen(true)}>
+            <Filter className="h-4 w-4 mr-2" />
+            Filter
+          </Button>
+          <TemplateColumnToggle
+            visibleColumns={visibleColumns}
+            onToggle={(column) =>
+              setVisibleColumns((prev) => ({
+                ...prev,
+                [column]: !prev[column],
+              }))
+            }
+          />
+          <Button size="sm" onClick={() => navigate("/templates/create")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Buat Template
+          </Button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="bg-card border border-border/60 rounded-xl overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead className="w-12">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="w-[40px]">
                   <Checkbox
-                    checked={
-                      paginatedTemplates.length > 0 &&
-                      paginatedTemplates.every((t) => selectedIds.includes(t.id))
-                    }
+                    checked={paginatedTemplates.length > 0 && selectedIds.length === paginatedTemplates.length}
                     onCheckedChange={handleSelectAll}
                   />
                 </TableHead>
@@ -276,25 +288,13 @@ export default function Templates() {
                   </TableHead>
                 )}
                 {visibleColumns.name && (
-                  <TableHead
-                    className="uppercase text-xs font-medium tracking-wider cursor-pointer"
-                    onClick={() => handleSort('name')}
-                  >
-                    <div className="flex items-center gap-1">
-                      Nama
-                      <ArrowUpDown className="h-3 w-3" />
-                    </div>
+                  <TableHead>
+                    <SortableHeader field="name">Nama</SortableHeader>
                   </TableHead>
                 )}
                 {visibleColumns.type && (
-                  <TableHead
-                    className="uppercase text-xs font-medium tracking-wider cursor-pointer"
-                    onClick={() => handleSort('type')}
-                  >
-                    <div className="flex items-center gap-1">
-                      Tipe
-                      <ArrowUpDown className="h-3 w-3" />
-                    </div>
+                  <TableHead>
+                    <SortableHeader field="type">Tipe</SortableHeader>
                   </TableHead>
                 )}
                 {visibleColumns.is_premium && (
@@ -308,38 +308,40 @@ export default function Templates() {
                   </TableHead>
                 )}
                 {visibleColumns.created_at && (
-                  <TableHead
-                    className="uppercase text-xs font-medium tracking-wider cursor-pointer"
-                    onClick={() => handleSort('created_at')}
-                  >
-                    <div className="flex items-center gap-1">
-                      Dibuat
-                      <ArrowUpDown className="h-3 w-3" />
-                    </div>
+                  <TableHead>
+                    <SortableHeader field="created_at">Dibuat</SortableHeader>
                   </TableHead>
                 )}
-                <TableHead className="w-12"></TableHead>
+                <TableHead className="w-[60px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedTemplates.length === 0 ? (
-                <TableRow>
+                <TableRow className="hover:bg-transparent">
                   <TableCell
                     colSpan={Object.values(visibleColumns).filter(Boolean).length + 2}
-                    className="text-center py-8 text-muted-foreground"
+                    className="text-center py-16 text-muted-foreground"
                   >
-                    Tidak ada template ditemukan
+                    <div className="flex flex-col items-center gap-2">
+                      <FileStack className="h-10 w-10 text-muted-foreground/50" />
+                      <p className="text-base font-medium">Tidak ada template</p>
+                      <p className="text-sm">Mulai buat template pertama Anda</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
-                paginatedTemplates.map((template) => (
-                  <TableRow key={template.id}>
+                paginatedTemplates.map((template, index) => (
+                  <TableRow 
+                    key={template.id}
+                    className={cn(
+                      index % 2 === 0 ? "bg-background" : "bg-muted/20",
+                      selectedIds.includes(template.id) && "bg-primary/5"
+                    )}
+                  >
                     <TableCell>
                       <Checkbox
                         checked={selectedIds.includes(template.id)}
-                        onCheckedChange={(checked) =>
-                          handleSelectOne(template.id, checked as boolean)
-                        }
+                        onCheckedChange={() => handleSelectOne(template.id)}
                       />
                     </TableCell>
                     {visibleColumns.preview_image && (
@@ -397,18 +399,18 @@ export default function Templates() {
                       </TableCell>
                     )}
                     {visibleColumns.created_at && (
-                      <TableCell className="whitespace-nowrap">
-                        {new Date(template.created_at).toLocaleDateString("id-ID")}
+                      <TableCell className="whitespace-nowrap text-muted-foreground">
+                        {format(new Date(template.created_at), "dd MMM yyyy")}
                       </TableCell>
                     )}
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="z-50 bg-popover">
                           <DropdownMenuItem
                             onClick={() => navigate(`/templates/${template.id}`)}
                           >
@@ -428,7 +430,7 @@ export default function Templates() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => handleDelete(template.id)}
-                            className="text-destructive"
+                            className="text-destructive focus:text-destructive"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Hapus
@@ -444,33 +446,70 @@ export default function Templates() {
         </div>
 
         {/* Pagination */}
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-              />
-            </PaginationItem>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  onClick={() => setCurrentPage(page)}
-                  isActive={currentPage === page}
-                  className="cursor-pointer"
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-4 py-4 border-t border-border/60">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Menampilkan</span>
+            <Select
+              value={perPage.toString()}
+              onValueChange={(value) => {
+                setPerPage(Number(value));
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[70px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="z-50 bg-popover">
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectContent>
+            </Select>
+            <span>dari {filteredAndSortedTemplates.length} data</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="px-3 text-sm">
+              {currentPage} / {totalPages || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Filter Modal */}
@@ -492,7 +531,10 @@ export default function Templates() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Hapus
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -510,8 +552,11 @@ export default function Templates() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Hapus
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Hapus Semua
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
