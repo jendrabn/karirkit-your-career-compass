@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Circle } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -233,19 +233,19 @@ export function DashboardSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   {!isCollapsed && (
-                    <CollapsibleContent className="space-y-1 mt-1">
+                    <CollapsibleContent className="mt-1">
                       {blogMenuItems.map((item) => (
                         <NavLink
                           key={item.url}
                           to={item.url}
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
+                            "flex items-center gap-3 py-2 pl-8 pr-3 rounded-lg text-sm transition-colors",
                             location.pathname === item.url
-                              ? "bg-muted text-foreground font-medium"
+                              ? "text-foreground font-medium"
                               : "hover:bg-muted/50 text-muted-foreground"
                           )}
                         >
-                          <Circle className="h-2 w-2 fill-current" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-current" />
                           {item.title}
                         </NavLink>
                       ))}
@@ -283,19 +283,19 @@ export function DashboardSidebar() {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   {!isCollapsed && (
-                    <CollapsibleContent className="space-y-1 mt-1">
+                    <CollapsibleContent className="mt-1">
                       {templateMenuItems.map((item) => (
                         <NavLink
                           key={item.url}
                           to={item.url}
                           className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
+                            "flex items-center gap-3 py-2 pl-8 pr-3 rounded-lg text-sm transition-colors",
                             location.pathname === item.url
-                              ? "bg-muted text-foreground font-medium"
+                              ? "text-foreground font-medium"
                               : "hover:bg-muted/50 text-muted-foreground"
                           )}
                         >
-                          <Circle className="h-2 w-2 fill-current" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-current" />
                           {item.title}
                         </NavLink>
                       ))}
