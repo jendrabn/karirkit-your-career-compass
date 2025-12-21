@@ -1,8 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
-import heroTracker from "@/assets/hero-tracker.png";
-import heroPortfolio from "@/assets/hero-portfolio.png";
-import heroCVSample from "@/assets/hero-cv-sample.png";
+import heroIllustration from "@/assets/hero-illustration.png";
 
 export function HeroSection() {
   return (
@@ -60,60 +58,14 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Right Content - Feature Showcase */}
+          {/* Right Content - Hero Illustration */}
           <div className="relative">
-            {/* Main Application Tracker Screenshot - Highlighted */}
-            <div className="relative z-20">
-              <div className="absolute -top-4 -left-4 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-30 flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                Fitur Utama
-              </div>
-              <div className="rounded-2xl overflow-hidden shadow-2xl ring-2 ring-primary/20 bg-card">
-                <img
-                  src={heroTracker}
-                  alt="Application Tracker - Pelacak Lamaran Kerja"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-            </div>
-
-            {/* Portfolio Screenshot - Bottom Left */}
-            <div className="absolute -bottom-8 -left-8 w-48 lg:w-56 z-10 hidden lg:block">
-              <div className="rounded-xl overflow-hidden shadow-xl ring-1 ring-border/50 bg-card transform hover:scale-105 transition-transform duration-300">
-                <img
-                  src={heroPortfolio}
-                  alt="Portfolio Digital"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-              <div className="absolute -top-3 -right-3 bg-card text-foreground px-3 py-1 rounded-full text-xs font-medium shadow-md border border-border">
-                Portfolio
-              </div>
-            </div>
-
-            {/* CV Sample - Bottom Right */}
-            <div className="absolute -bottom-4 -right-4 w-32 lg:w-40 z-10 hidden lg:block">
-              <div className="rounded-xl overflow-hidden shadow-xl ring-1 ring-border/50 bg-card transform hover:scale-105 transition-transform duration-300">
-                <img
-                  src={heroCVSample}
-                  alt="CV ATS Template - John Doe"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-              <div className="absolute -top-3 -left-3 bg-card text-foreground px-3 py-1 rounded-full text-xs font-medium shadow-md border border-border">
-                CV ATS
-              </div>
-            </div>
-
-            {/* Floating Status Card */}
-            <div className="absolute top-4 -right-4 bg-card rounded-xl p-3 shadow-xl border border-border/50 hidden lg:flex items-center gap-3 animate-bounce z-30" style={{ animationDuration: '3s' }}>
-              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Status</p>
-                <p className="text-sm font-semibold text-primary">Interview!</p>
-              </div>
+            <div className="rounded-3xl overflow-hidden">
+              <img
+                src={heroIllustration}
+                alt="KarirKit - Platform manajemen lamaran kerja dengan Application Tracker, CV Builder, Portfolio, dan Surat Lamaran"
+                className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
+              />
             </div>
           </div>
         </div>
