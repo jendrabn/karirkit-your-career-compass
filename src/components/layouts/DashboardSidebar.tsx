@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
@@ -12,6 +13,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { DonationModal } from "@/components/DonationModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -82,6 +85,7 @@ export function DashboardSidebar() {
   const isCollapsed = state === "collapsed";
   const [blogOpen, setBlogOpen] = useState(location.pathname.startsWith("/blogs") || location.pathname === "/categories" || location.pathname === "/tags");
   const [templateOpen, setTemplateOpen] = useState(location.pathname.startsWith("/templates"));
+  const [donationOpen, setDonationOpen] = useState(false);
 
   const isActive = (path: string) => {
     if (path === "/applications") {
@@ -308,6 +312,22 @@ export function DashboardSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className={cn("border-t", isCollapsed ? "p-2" : "p-4")}>
+        <Button
+          onClick={() => setDonationOpen(true)}
+          className={cn(
+            "w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse hover:animate-none",
+            isCollapsed ? "p-2" : "gap-2"
+          )}
+          size={isCollapsed ? "icon" : "default"}
+        >
+          <Heart className="h-5 w-5 fill-white" />
+          {!isCollapsed && <span className="font-semibold">Donasi Sekarang</span>}
+        </Button>
+      </SidebarFooter>
+
+      <DonationModal open={donationOpen} onOpenChange={setDonationOpen} />
     </Sidebar>
   );
 }
