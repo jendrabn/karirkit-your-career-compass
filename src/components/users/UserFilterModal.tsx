@@ -69,16 +69,16 @@ export function UserFilterModal({
           <div className="space-y-2">
             <Label>Role</Label>
             <Select
-              value={localFilters.role || ""}
+              value={localFilters.role || "all"}
               onValueChange={(val) =>
-                setLocalFilters({ ...localFilters, role: val as UserRole || undefined })
+                setLocalFilters({ ...localFilters, role: val === "all" ? undefined : val as UserRole })
               }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Pilih role" />
               </SelectTrigger>
               <SelectContent className="bg-popover z-50">
-                <SelectItem value="">Semua</SelectItem>
+                <SelectItem value="all">Semua</SelectItem>
                 {USER_ROLE_OPTIONS.map((opt) => (
                   <SelectItem key={opt.value} value={opt.value}>
                     {opt.label}
@@ -91,16 +91,16 @@ export function UserFilterModal({
           <div className="space-y-2">
             <Label>Status</Label>
             <Select
-              value={localFilters.status || ""}
+              value={localFilters.status || "all"}
               onValueChange={(val) =>
-                setLocalFilters({ ...localFilters, status: val as UserStatus || undefined })
+                setLocalFilters({ ...localFilters, status: val === "all" ? undefined : val as UserStatus })
               }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Pilih status" />
               </SelectTrigger>
               <SelectContent className="bg-popover z-50">
-                <SelectItem value="">Semua</SelectItem>
+                <SelectItem value="all">Semua</SelectItem>
                 {USER_STATUS_OPTIONS.map((opt) => (
                   <SelectItem key={opt.value} value={opt.value}>
                     {opt.label}
