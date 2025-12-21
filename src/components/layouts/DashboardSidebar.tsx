@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart, Users } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -209,6 +209,27 @@ export function DashboardSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
+              {/* Users Management */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild size="lg" tooltip="Users">
+                  <NavLink
+                    to="/admin/users"
+                    className={cn(
+                      "flex items-center rounded-lg transition-colors",
+                      isCollapsed ? "justify-center px-2 py-3" : "gap-3 px-3 py-3",
+                      location.pathname.startsWith("/admin/users")
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted text-foreground"
+                    )}
+                  >
+                    <Users className="h-5 w-5 shrink-0" />
+                    {!isCollapsed && (
+                      <span className="font-medium">Users</span>
+                    )}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
               {/* Blog Menu with Dropdown */}
               <SidebarMenuItem>
                 <Collapsible open={blogOpen} onOpenChange={setBlogOpen}>
@@ -317,7 +338,7 @@ export function DashboardSidebar() {
         <Button
           onClick={() => setDonationOpen(true)}
           className={cn(
-            "w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse hover:animate-none",
+            "w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300",
             isCollapsed ? "p-2" : "gap-2"
           )}
           size={isCollapsed ? "icon" : "default"}
