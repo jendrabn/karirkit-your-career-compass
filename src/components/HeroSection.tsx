@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import heroTracker from "@/assets/hero-tracker.png";
+import heroPortfolio from "@/assets/hero-portfolio.png";
+import heroCVSample from "@/assets/hero-cv-sample.png";
 
 export function HeroSection() {
   return (
@@ -57,35 +60,60 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Right Content - Hero Image */}
+          {/* Right Content - Feature Showcase */}
           <div className="relative">
-            {/* Floating cards decoration */}
-            <div className="absolute -top-6 -left-6 bg-card rounded-xl p-4 shadow-xl border border-border/50 hidden lg:flex items-center gap-3 animate-bounce" style={{ animationDuration: '3s' }}>
-              <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                <CheckCircle2 className="w-5 h-5 text-primary" />
+            {/* Main Application Tracker Screenshot - Highlighted */}
+            <div className="relative z-20">
+              <div className="absolute -top-4 -left-4 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-30 flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                Fitur Utama
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Status Lamaran</p>
-                <p className="text-sm font-semibold text-foreground">Interview Scheduled</p>
-              </div>
-            </div>
-
-            <div className="absolute -bottom-6 -right-6 bg-card rounded-xl p-4 shadow-xl border border-border/50 hidden lg:flex items-center gap-3 animate-bounce" style={{ animationDuration: '4s' }}>
-              <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">CV Score</p>
-                <p className="text-sm font-semibold text-primary">95/100</p>
+              <div className="rounded-2xl overflow-hidden shadow-2xl ring-2 ring-primary/20 bg-card">
+                <img
+                  src={heroTracker}
+                  alt="Application Tracker - Pelacak Lamaran Kerja"
+                  className="w-full h-auto object-cover"
+                />
               </div>
             </div>
 
-            <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-border/20">
-              <img
-                src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&h=600&fit=crop"
-                alt="Dashboard KarirKit - Platform manajemen lamaran kerja"
-                className="w-full h-auto object-cover"
-              />
+            {/* Portfolio Screenshot - Bottom Left */}
+            <div className="absolute -bottom-8 -left-8 w-48 lg:w-56 z-10 hidden lg:block">
+              <div className="rounded-xl overflow-hidden shadow-xl ring-1 ring-border/50 bg-card transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src={heroPortfolio}
+                  alt="Portfolio Digital"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              <div className="absolute -top-3 -right-3 bg-card text-foreground px-3 py-1 rounded-full text-xs font-medium shadow-md border border-border">
+                Portfolio
+              </div>
+            </div>
+
+            {/* CV Sample - Bottom Right */}
+            <div className="absolute -bottom-4 -right-4 w-32 lg:w-40 z-10 hidden lg:block">
+              <div className="rounded-xl overflow-hidden shadow-xl ring-1 ring-border/50 bg-card transform hover:scale-105 transition-transform duration-300">
+                <img
+                  src={heroCVSample}
+                  alt="CV ATS Template - John Doe"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+              <div className="absolute -top-3 -left-3 bg-card text-foreground px-3 py-1 rounded-full text-xs font-medium shadow-md border border-border">
+                CV ATS
+              </div>
+            </div>
+
+            {/* Floating Status Card */}
+            <div className="absolute top-4 -right-4 bg-card rounded-xl p-3 shadow-xl border border-border/50 hidden lg:flex items-center gap-3 animate-bounce z-30" style={{ animationDuration: '3s' }}>
+              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Status</p>
+                <p className="text-sm font-semibold text-primary">Interview!</p>
+              </div>
             </div>
           </div>
         </div>
