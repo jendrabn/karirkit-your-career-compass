@@ -15,6 +15,7 @@ import {
 import { ChevronDown, Menu, X, LogOut, User, Home, FileText, Briefcase, FolderOpen, Globe } from "lucide-react";
 import logo from "@/assets/karirkit-logo.png";
 import { DonationModal } from "./DonationModal";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navLinks = [
   { href: "#beranda", label: "Beranda" },
@@ -64,6 +65,7 @@ export function Navbar({ isLoggedIn = false, onLoginToggle }: NavbarProps) {
 
           {/* Desktop Auth Buttons / User Menu */}
           <div className="hidden lg:flex items-center gap-3">
+            <ThemeToggle />
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -133,17 +135,20 @@ export function Navbar({ isLoggedIn = false, onLoginToggle }: NavbarProps) {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          {/* Mobile Theme Toggle & Menu Button */}
+          <div className="lg:hidden flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              className="p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
