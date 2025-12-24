@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart, Users } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart, Users, Sun, Moon, Monitor } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 import {
   Sidebar,
   SidebarContent,
@@ -82,6 +83,7 @@ export function DashboardSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = useSidebar();
+  const { theme, setTheme } = useTheme();
   const isCollapsed = state === "collapsed";
   const [blogOpen, setBlogOpen] = useState(location.pathname.startsWith("/blogs") || location.pathname === "/categories" || location.pathname === "/tags");
   const [templateOpen, setTemplateOpen] = useState(location.pathname.startsWith("/templates"));
@@ -139,6 +141,39 @@ export function DashboardSidebar() {
               <Lock className="h-4 w-4 mr-2" />
               Change Password
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <div className="px-2 py-1.5">
+              <p className="text-xs text-muted-foreground mb-2">Tema</p>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setTheme("light")}
+                  className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${
+                    theme === "light" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                  }`}
+                >
+                  <Sun className="h-3 w-3" />
+                  Terang
+                </button>
+                <button
+                  onClick={() => setTheme("dark")}
+                  className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${
+                    theme === "dark" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                  }`}
+                >
+                  <Moon className="h-3 w-3" />
+                  Gelap
+                </button>
+                <button
+                  onClick={() => setTheme("system")}
+                  className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${
+                    theme === "system" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                  }`}
+                >
+                  <Monitor className="h-3 w-3" />
+                  Sistem
+                </button>
+              </div>
+            </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate("/auth/login")} className="text-destructive">
               <LogOut className="h-4 w-4 mr-2" />
