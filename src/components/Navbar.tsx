@@ -12,10 +12,11 @@ import {
   DropdownMenuSubContent,
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, Menu, X, LogOut, User, Home, FileText, Briefcase, FolderOpen, Globe } from "lucide-react";
+import { ChevronDown, Menu, X, LogOut, User, Home, FileText, Briefcase, FolderOpen, Globe, Sun, Moon, Monitor } from "lucide-react";
 import logo from "@/assets/karirkit-logo.png";
 import { DonationModal } from "./DonationModal";
 import { ThemeToggle } from "./ThemeToggle";
+import { useTheme } from "@/hooks/use-theme";
 
 const navLinks = [
   { href: "#beranda", label: "Beranda" },
@@ -34,6 +35,7 @@ interface NavbarProps {
 export function Navbar({ isLoggedIn = false, onLoginToggle }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [donationModalOpen, setDonationModalOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   return (
     <>
@@ -113,6 +115,28 @@ export function Navbar({ isLoggedIn = false, onLoginToggle }: NavbarProps) {
                       <DropdownMenuSubContent className="bg-popover">
                         <DropdownMenuItem className="cursor-pointer">Bahasa Indonesia</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer">English</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      {theme === "dark" ? <Moon className="mr-2 h-4 w-4" /> : theme === "light" ? <Sun className="mr-2 h-4 w-4" /> : <Monitor className="mr-2 h-4 w-4" />}
+                      Tema
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent className="bg-popover">
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("light")}>
+                          <Sun className="mr-2 h-4 w-4" />
+                          Terang
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("dark")}>
+                          <Moon className="mr-2 h-4 w-4" />
+                          Gelap
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("system")}>
+                          <Monitor className="mr-2 h-4 w-4" />
+                          Sistem
+                        </DropdownMenuItem>
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
