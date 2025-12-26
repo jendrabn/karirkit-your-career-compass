@@ -96,16 +96,16 @@ export default function ApplicationShow() {
       <PageHeader title={application.position} subtitle={application.company_name} />
 
       <div className="flex flex-wrap gap-2 mb-6">
-        <Button onClick={() => navigate(`/applications/${id}/edit`)}>
-          <Pencil className="h-4 w-4 mr-2" />
+        <Button size="sm" onClick={() => navigate(`/applications/${id}/edit`)}>
+          <Pencil className="h-3.5 w-3.5 mr-1.5" />
           Edit
         </Button>
-        <Button variant="outline" onClick={handleDuplicate}>
-          <Copy className="h-4 w-4 mr-2" />
+        <Button size="sm" variant="outline" onClick={handleDuplicate}>
+          <Copy className="h-3.5 w-3.5 mr-1.5" />
           Duplikat
         </Button>
-        <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
-          <Trash2 className="h-4 w-4 mr-2" />
+        <Button size="sm" variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
+          <Trash2 className="h-3.5 w-3.5 mr-1.5" />
           Hapus
         </Button>
       </div>
