@@ -44,12 +44,12 @@ export function TrustedBySection() {
           {companies.map((company, index) => (
             <div
               key={index}
-              className="flex items-center justify-center h-12 grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"
+              className="flex items-center justify-center h-12 opacity-60 hover:opacity-100 transition-all duration-300"
             >
               <img
                 src={company.logo}
                 alt={`Logo ${company.name}`}
-                className="max-h-8 w-auto object-contain"
+                className="max-h-8 w-auto object-contain grayscale hover:grayscale-0 dark:invert dark:hover:invert-0"
               />
             </div>
           ))}
