@@ -1,12 +1,24 @@
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
-import { ArrowLeft, Pencil, ExternalLink } from "lucide-react";
+import { ArrowLeft, Pencil, ExternalLink, Copy, Trash2 } from "lucide-react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { mockApplications } from "@/data/mockApplications";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import {
   JOB_TYPE_OPTIONS,
   WORK_SYSTEM_OPTIONS,
@@ -17,6 +29,7 @@ import {
 export default function ApplicationShow() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const application = mockApplications.find((app) => app.id === id);
 
@@ -28,6 +41,17 @@ export default function ApplicationShow() {
       </DashboardLayout>
     );
   }
+
+  const handleDelete = () => {
+    setDeleteDialogOpen(false);
+    toast.success("Lamaran berhasil dihapus");
+    navigate("/applications");
+  };
+
+  const handleDuplicate = () => {
+    toast.success("Lamaran berhasil diduplikasi");
+    navigate("/applications/create");
+  };
 
   const getLabel = (value: string, options: { value: string; label: string }[]) => {
     return options.find((opt) => opt.value === value)?.label || value;
@@ -69,14 +93,24 @@ export default function ApplicationShow() {
         </Button>
       </div>
 
-      <PageHeader title={application.position} subtitle={application.company_name}>
+      <PageHeader title={application.position} subtitle={application.company_name} />
+
+      <div className="flex flex-wrap gap-2 mb-6">
         <Button onClick={() => navigate(`/applications/${id}/edit`)}>
           <Pencil className="h-4 w-4 mr-2" />
           Edit
         </Button>
-      </PageHeader>
+        <Button variant="outline" onClick={handleDuplicate}>
+          <Copy className="h-4 w-4 mr-2" />
+          Duplikat
+        </Button>
+        <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
+          <Trash2 className="h-4 w-4 mr-2" />
+          Hapus
+        </Button>
+      </div>
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6">
         <Badge variant="outline">{getLabel(application.job_type, JOB_TYPE_OPTIONS)}</Badge>
         <Badge variant="outline">{getLabel(application.work_system, WORK_SYSTEM_OPTIONS)}</Badge>
         <Badge variant="secondary">{getLabel(application.status, STATUS_OPTIONS)}</Badge>
@@ -159,6 +193,21 @@ export default function ApplicationShow() {
           </div>
         </Card>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Lamaran</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin menghapus lamaran untuk posisi "{application.position}" di "{application.company_name}"? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Hapus</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 }
