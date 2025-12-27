@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart, Users, Sun, Moon, Monitor } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart, Users, Sun, Moon, Monitor, Briefcase } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import {
   Sidebar,
@@ -72,6 +72,12 @@ const templateMenuItems = [
   { title: "Buat Template", url: "/templates/create" },
 ];
 
+const jobMenuItems = [
+  { title: "Lowongan Kerja", url: "/admin/jobs" },
+  { title: "Perusahaan", url: "/admin/companies" },
+  { title: "Kategori Pekerjaan", url: "/admin/job-roles" },
+];
+
 // Mock user data - replace with actual user data later
 const mockUser = {
   name: "Jendra Bayu",
@@ -87,6 +93,7 @@ export function DashboardSidebar() {
   const isCollapsed = state === "collapsed";
   const [blogOpen, setBlogOpen] = useState(location.pathname.startsWith("/blogs") || location.pathname === "/categories" || location.pathname === "/tags");
   const [templateOpen, setTemplateOpen] = useState(location.pathname.startsWith("/templates"));
+  const [jobOpen, setJobOpen] = useState(location.pathname.startsWith("/admin/jobs") || location.pathname.startsWith("/admin/companies") || location.pathname.startsWith("/admin/job-roles"));
   const [donationOpen, setDonationOpen] = useState(false);
 
   const isActive = (path: string) => {
@@ -98,6 +105,7 @@ export function DashboardSidebar() {
 
   const isBlogActive = location.pathname.startsWith("/blogs") || location.pathname === "/categories" || location.pathname === "/tags";
   const isTemplateActive = location.pathname.startsWith("/templates");
+  const isJobActive = location.pathname.startsWith("/admin/jobs") || location.pathname.startsWith("/admin/companies") || location.pathname.startsWith("/admin/job-roles");
 
   return (
     <Sidebar collapsible="icon" className="border-r">
@@ -263,6 +271,56 @@ export function DashboardSidebar() {
                     )}
                   </NavLink>
                 </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* Jobs Menu with Dropdown */}
+              <SidebarMenuItem>
+                <Collapsible open={jobOpen} onOpenChange={setJobOpen}>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      size="lg"
+                      tooltip="Lowongan Kerja"
+                      className={cn(
+                        "flex items-center rounded-lg transition-colors w-full",
+                        isCollapsed ? "justify-center px-2 py-3" : "gap-3 px-3 py-3",
+                        isJobActive
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-muted text-foreground"
+                      )}
+                    >
+                      <Briefcase className="h-5 w-5 shrink-0" />
+                      {!isCollapsed && (
+                        <>
+                          <span className="font-medium flex-1 text-left">Lowongan Kerja</span>
+                          {jobOpen ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  {!isCollapsed && (
+                    <CollapsibleContent className="mt-1">
+                      {jobMenuItems.map((item) => (
+                        <NavLink
+                          key={item.url}
+                          to={item.url}
+                          className={cn(
+                            "flex items-center gap-3 py-2 pl-8 pr-3 rounded-lg text-sm transition-colors",
+                            location.pathname === item.url || location.pathname.startsWith(item.url + "/")
+                              ? "text-foreground font-medium"
+                              : "hover:bg-muted/50 text-muted-foreground"
+                          )}
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                          {item.title}
+                        </NavLink>
+                      ))}
+                    </CollapsibleContent>
+                  )}
+                </Collapsible>
               </SidebarMenuItem>
 
               {/* Blog Menu with Dropdown */}
