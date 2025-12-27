@@ -165,19 +165,13 @@ export default function JobDetail() {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              {/* Apply Card */}
-              <Card className="sticky top-6">
+            {/* Salary & Contact Card */}
+              <Card>
                 <CardContent className="p-6">
                   <div className="text-center mb-4">
                     <p className="text-sm text-muted-foreground mb-1">Gaji</p>
                     <p className="text-xl font-bold text-primary">{formatSalary(job.salary_min, job.salary_max)}</p>
                   </div>
-                  <Button className="w-full mb-3" asChild>
-                    <a href={job.job_url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Lamar Sekarang
-                    </a>
-                  </Button>
                   <Separator className="my-4" />
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center gap-2">
