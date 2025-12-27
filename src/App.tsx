@@ -48,6 +48,8 @@ import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
 import OTPVerification from "./pages/OTPVerification";
 import NotFound from "./pages/NotFound";
+import Jobs from "./pages/Jobs";
+import JobDetail from "./pages/JobDetail";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +104,8 @@ const App = () => (
           <Route path="/me/:username/:id" element={<PortfolioDetail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs/:slug" element={<JobDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
