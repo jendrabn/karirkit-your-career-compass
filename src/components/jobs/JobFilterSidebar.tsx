@@ -1,19 +1,20 @@
-import { X, SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
+import { X, SlidersHorizontal, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { JobRole, City, JOB_TYPE_LABELS, WORK_SYSTEM_LABELS, JobType, WorkSystem } from "@/types/job";
 
 interface JobFilters {
-  job_type?: JobType;
-  work_system?: WorkSystem;
-  job_role_id?: string;
-  city_id?: string;
+  job_types?: JobType[];
+  work_systems?: WorkSystem[];
+  job_role_ids?: string[];
+  city_ids?: string[];
   experience_min?: number;
 }
 
@@ -33,6 +34,32 @@ const experienceOptions = [
   { value: 5, label: "5+ tahun" },
 ];
 
+function FilterSection({
+  title,
+  children,
+  defaultOpen = true,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="flex items-center justify-between w-full py-2">
+        <h4 className="font-medium text-sm">{title}</h4>
+        {isOpen ? (
+          <ChevronUp className="h-4 w-4 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        )}
+      </CollapsibleTrigger>
+      <CollapsibleContent className="pt-2 pb-4">{children}</CollapsibleContent>
+    </Collapsible>
+  );
+}
+
 function FilterContent({
   jobRoles,
   cities,
@@ -40,162 +67,211 @@ function FilterContent({
   onFilterChange,
   onClearFilters,
 }: JobFilterSidebarProps) {
-  const hasActiveFilters = Object.values(filters).some((v) => v !== undefined);
+  const [showAllRoles, setShowAllRoles] = useState(false);
+  const [showAllCities, setShowAllCities] = useState(false);
+
+  const hasActiveFilters = 
+    (filters.job_types?.length || 0) > 0 ||
+    (filters.work_systems?.length || 0) > 0 ||
+    (filters.job_role_ids?.length || 0) > 0 ||
+    (filters.city_ids?.length || 0) > 0 ||
+    filters.experience_min !== undefined;
+
+  const handleJobTypeChange = (value: JobType, checked: boolean) => {
+    const current = filters.job_types || [];
+    const updated = checked
+      ? [...current, value]
+      : current.filter((v) => v !== value);
+    onFilterChange({ ...filters, job_types: updated.length > 0 ? updated : undefined });
+  };
+
+  const handleWorkSystemChange = (value: WorkSystem, checked: boolean) => {
+    const current = filters.work_systems || [];
+    const updated = checked
+      ? [...current, value]
+      : current.filter((v) => v !== value);
+    onFilterChange({ ...filters, work_systems: updated.length > 0 ? updated : undefined });
+  };
+
+  const handleJobRoleChange = (value: string, checked: boolean) => {
+    const current = filters.job_role_ids || [];
+    const updated = checked
+      ? [...current, value]
+      : current.filter((v) => v !== value);
+    onFilterChange({ ...filters, job_role_ids: updated.length > 0 ? updated : undefined });
+  };
+
+  const handleCityChange = (value: string, checked: boolean) => {
+    const current = filters.city_ids || [];
+    const updated = checked
+      ? [...current, value]
+      : current.filter((v) => v !== value);
+    onFilterChange({ ...filters, city_ids: updated.length > 0 ? updated : undefined });
+  };
+
+  const handleExperienceChange = (value: number, checked: boolean) => {
+    onFilterChange({
+      ...filters,
+      experience_min: checked ? value : undefined,
+    });
+  };
+
+  const displayedRoles = showAllRoles ? jobRoles : jobRoles.slice(0, 5);
+  const displayedCities = showAllCities ? cities : cities.slice(0, 5);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-1">
       {hasActiveFilters && (
         <Button
           variant="ghost"
           size="sm"
           onClick={onClearFilters}
-          className="w-full justify-start text-destructive hover:text-destructive"
+          className="w-full justify-start text-destructive hover:text-destructive mb-4"
         >
           <X className="h-4 w-4 mr-2" />
           Hapus Semua Filter
         </Button>
       )}
 
+      {/* Job Role Filter */}
+      <FilterSection title="Role pekerjaan">
+        <div className="space-y-3">
+          {displayedRoles.map((role) => (
+            <div key={role.id} className="flex items-center space-x-2">
+              <Checkbox
+                id={`role-${role.id}`}
+                checked={filters.job_role_ids?.includes(role.id) || false}
+                onCheckedChange={(checked) =>
+                  handleJobRoleChange(role.id, checked as boolean)
+                }
+              />
+              <Label htmlFor={`role-${role.id}`} className="text-sm cursor-pointer font-normal">
+                {role.name}
+              </Label>
+            </div>
+          ))}
+          {jobRoles.length > 5 && (
+            <button
+              type="button"
+              onClick={() => setShowAllRoles(!showAllRoles)}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              {showAllRoles ? "Tampilkan lebih sedikit" : "Selengkapnya"}
+            </button>
+          )}
+        </div>
+      </FilterSection>
+
+      <Separator />
+
       {/* Job Type Filter */}
-      <div>
-        <h4 className="font-medium mb-3">Tipe Pekerjaan</h4>
-        <div className="space-y-2">
+      <FilterSection title="Tipe pekerjaan">
+        <div className="space-y-3">
           {Object.entries(JOB_TYPE_LABELS).map(([value, label]) => (
             <div key={value} className="flex items-center space-x-2">
               <Checkbox
                 id={`job-type-${value}`}
-                checked={filters.job_type === value}
+                checked={filters.job_types?.includes(value as JobType) || false}
                 onCheckedChange={(checked) =>
-                  onFilterChange({
-                    ...filters,
-                    job_type: checked ? (value as JobType) : undefined,
-                  })
+                  handleJobTypeChange(value as JobType, checked as boolean)
                 }
               />
-              <Label htmlFor={`job-type-${value}`} className="text-sm cursor-pointer">
+              <Label htmlFor={`job-type-${value}`} className="text-sm cursor-pointer font-normal">
                 {label}
               </Label>
             </div>
           ))}
         </div>
-      </div>
+      </FilterSection>
 
       <Separator />
 
       {/* Work System Filter */}
-      <div>
-        <h4 className="font-medium mb-3">Sistem Kerja</h4>
-        <div className="space-y-2">
+      <FilterSection title="Sistem kerja">
+        <div className="space-y-3">
           {Object.entries(WORK_SYSTEM_LABELS).map(([value, label]) => (
             <div key={value} className="flex items-center space-x-2">
               <Checkbox
                 id={`work-system-${value}`}
-                checked={filters.work_system === value}
+                checked={filters.work_systems?.includes(value as WorkSystem) || false}
                 onCheckedChange={(checked) =>
-                  onFilterChange({
-                    ...filters,
-                    work_system: checked ? (value as WorkSystem) : undefined,
-                  })
+                  handleWorkSystemChange(value as WorkSystem, checked as boolean)
                 }
               />
-              <Label htmlFor={`work-system-${value}`} className="text-sm cursor-pointer">
+              <Label htmlFor={`work-system-${value}`} className="text-sm cursor-pointer font-normal">
                 {label}
               </Label>
             </div>
           ))}
         </div>
-      </div>
+      </FilterSection>
 
       <Separator />
 
       {/* Experience Filter */}
-      <div>
-        <h4 className="font-medium mb-3">Pengalaman Minimal</h4>
-        <RadioGroup
-          value={filters.experience_min?.toString() ?? ""}
-          onValueChange={(value) =>
-            onFilterChange({
-              ...filters,
-              experience_min: value ? parseInt(value) : undefined,
-            })
-          }
-        >
+      <FilterSection title="Pengalaman minimal">
+        <div className="space-y-3">
           {experienceOptions.map((option) => (
             <div key={option.value} className="flex items-center space-x-2">
-              <RadioGroupItem value={option.value.toString()} id={`exp-${option.value}`} />
-              <Label htmlFor={`exp-${option.value}`} className="text-sm cursor-pointer">
+              <Checkbox
+                id={`exp-${option.value}`}
+                checked={filters.experience_min === option.value}
+                onCheckedChange={(checked) =>
+                  handleExperienceChange(option.value, checked as boolean)
+                }
+              />
+              <Label htmlFor={`exp-${option.value}`} className="text-sm cursor-pointer font-normal">
                 {option.label}
               </Label>
             </div>
           ))}
-        </RadioGroup>
-      </div>
-
-      <Separator />
-
-      {/* Job Role Filter */}
-      <div>
-        <h4 className="font-medium mb-3">Role Pekerjaan</h4>
-        <ScrollArea className="h-[180px]">
-          <div className="space-y-2 pr-4">
-            {jobRoles.map((role) => (
-              <div key={role.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`role-${role.id}`}
-                  checked={filters.job_role_id === role.id}
-                  onCheckedChange={(checked) =>
-                    onFilterChange({
-                      ...filters,
-                      job_role_id: checked ? role.id : undefined,
-                    })
-                  }
-                />
-                <Label htmlFor={`role-${role.id}`} className="text-sm cursor-pointer">
-                  {role.name}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
+        </div>
+      </FilterSection>
 
       <Separator />
 
       {/* City Filter */}
-      <div>
-        <h4 className="font-medium mb-3">Kota</h4>
-        <ScrollArea className="h-[180px]">
-          <div className="space-y-2 pr-4">
-            {cities.map((city) => (
-              <div key={city.id} className="flex items-center justify-between space-x-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`city-${city.id}`}
-                    checked={filters.city_id === city.id}
-                    onCheckedChange={(checked) =>
-                      onFilterChange({
-                        ...filters,
-                        city_id: checked ? city.id : undefined,
-                      })
-                    }
-                  />
-                  <Label htmlFor={`city-${city.id}`} className="text-sm cursor-pointer">
-                    {city.name}
-                  </Label>
-                </div>
-                <span className="text-xs text-muted-foreground">({city.job_count})</span>
+      <FilterSection title="Kota">
+        <div className="space-y-3">
+          {displayedCities.map((city) => (
+            <div key={city.id} className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={`city-${city.id}`}
+                  checked={filters.city_ids?.includes(city.id) || false}
+                  onCheckedChange={(checked) =>
+                    handleCityChange(city.id, checked as boolean)
+                  }
+                />
+                <Label htmlFor={`city-${city.id}`} className="text-sm cursor-pointer font-normal">
+                  {city.name}
+                </Label>
               </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </div>
+              <span className="text-xs text-muted-foreground">({city.job_count})</span>
+            </div>
+          ))}
+          {cities.length > 5 && (
+            <button
+              type="button"
+              onClick={() => setShowAllCities(!showAllCities)}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              {showAllCities ? "Tampilkan lebih sedikit" : "Selengkapnya"}
+            </button>
+          )}
+        </div>
+      </FilterSection>
     </div>
   );
 }
 
 export function JobFilterSidebar(props: JobFilterSidebarProps) {
-  const hasActiveFilters = Object.values(props.filters).some((v) => v !== undefined);
-  const filterCount = Object.values(props.filters).filter((v) => v !== undefined).length;
+  const filterCount = 
+    (props.filters.job_types?.length || 0) +
+    (props.filters.work_systems?.length || 0) +
+    (props.filters.job_role_ids?.length || 0) +
+    (props.filters.city_ids?.length || 0) +
+    (props.filters.experience_min !== undefined ? 1 : 0);
 
   return (
     <>
@@ -208,7 +284,7 @@ export function JobFilterSidebar(props: JobFilterSidebarProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[calc(100vh-200px)]">
+          <ScrollArea className="h-[calc(100vh-200px)] pr-4">
             <FilterContent {...props} />
           </ScrollArea>
         </CardContent>
@@ -235,7 +311,7 @@ export function JobFilterSidebar(props: JobFilterSidebarProps) {
                 Filter Lowongan
               </SheetTitle>
             </SheetHeader>
-            <ScrollArea className="h-[calc(100vh-100px)] mt-4">
+            <ScrollArea className="h-[calc(100vh-100px)] mt-4 pr-4">
               <FilterContent {...props} />
             </ScrollArea>
           </SheetContent>
@@ -244,3 +320,5 @@ export function JobFilterSidebar(props: JobFilterSidebarProps) {
     </>
   );
 }
+
+export type { JobFilters };

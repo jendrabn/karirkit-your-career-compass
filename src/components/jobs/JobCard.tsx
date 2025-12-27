@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Briefcase, Clock, Building2, GraduationCap } from "lucide-react";
+import { MapPin, Briefcase, Clock, Building2, GraduationCap, Bookmark } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Job, JOB_TYPE_LABELS, WORK_SYSTEM_LABELS, EDUCATION_LEVEL_LABELS } from "@/types/job";
+import { toast } from "sonner";
 
 interface JobCardProps {
   job: Job;
@@ -36,6 +39,15 @@ const formatDate = (dateString: string): string => {
 };
 
 export function JobCard({ job }: JobCardProps) {
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const handleBookmark = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsBookmarked(!isBookmarked);
+    toast.success(isBookmarked ? "Bookmark dihapus" : "Lowongan disimpan");
+  };
+
   return (
     <Link to={`/jobs/${job.slug}`}>
       <Card className="hover:shadow-md transition-shadow cursor-pointer group">
@@ -52,15 +64,27 @@ export function JobCard({ job }: JobCardProps) {
             {/* Job Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <h3 className="font-semibold text-base sm:text-lg group-hover:text-primary transition-colors truncate">
                     {job.title}
                   </h3>
                   <p className="text-sm text-muted-foreground truncate">{job.company.name}</p>
                 </div>
-                <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
-                  {formatDate(job.created_at)}
-                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-xs text-muted-foreground whitespace-nowrap hidden sm:inline">
+                    {formatDate(job.created_at)}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={handleBookmark}
+                  >
+                    <Bookmark
+                      className={`h-4 w-4 ${isBookmarked ? "fill-primary text-primary" : ""}`}
+                    />
+                  </Button>
+                </div>
               </div>
 
               {/* Location & Salary */}
