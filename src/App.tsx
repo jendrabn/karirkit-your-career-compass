@@ -50,6 +50,12 @@ import OTPVerification from "./pages/OTPVerification";
 import NotFound from "./pages/NotFound";
 import Jobs from "./pages/Jobs";
 import JobDetail from "./pages/JobDetail";
+import AdminJobs from "./pages/AdminJobs";
+import AdminJobCreate from "./pages/AdminJobCreate";
+import AdminJobEdit from "./pages/AdminJobEdit";
+import AdminJobShow from "./pages/AdminJobShow";
+import AdminCompanies from "./pages/AdminCompanies";
+import AdminJobRoles from "./pages/AdminJobRoles";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +90,12 @@ const App = () => (
           <Route path="/admin/users/create" element={<UserCreate />} />
           <Route path="/admin/users/:id/edit" element={<UserEdit />} />
           <Route path="/admin/users/:id" element={<UserShow />} />
+          <Route path="/admin/jobs" element={<AdminJobs />} />
+          <Route path="/admin/jobs/create" element={<AdminJobCreate />} />
+          <Route path="/admin/jobs/:id/edit" element={<AdminJobEdit />} />
+          <Route path="/admin/jobs/:id" element={<AdminJobShow />} />
+          <Route path="/admin/companies" element={<AdminCompanies />} />
+          <Route path="/admin/job-roles" element={<AdminJobRoles />} />
           <Route path="/applications" element={<Applications />} />
           <Route path="/applications/create" element={<ApplicationCreate />} />
           <Route path="/applications/:id/edit" element={<ApplicationEdit />} />
