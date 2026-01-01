@@ -1,6 +1,13 @@
 export type UserRole = "user" | "admin";
 export type UserStatus = "active" | "suspended" | "banned";
 
+export interface DownloadStats {
+  daily_limit: number;
+  today_count: number;
+  remaining: number;
+  total_count: number;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -9,7 +16,11 @@ export interface User {
   phone: string;
   role: UserRole;
   status: UserStatus;
+  status_reason?: string;
+  suspended_until?: string;
   avatar: string;
+  daily_download_limit: number;
+  download_stats?: DownloadStats;
   created_at: string;
   updated_at: string;
 }
