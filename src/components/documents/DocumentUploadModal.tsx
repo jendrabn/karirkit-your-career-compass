@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Upload, X, FileText, Loader2 } from "lucide-react";
+import { Upload, X, FileText, Loader2, ImageIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,10 +19,19 @@ import {
 import { documentTypes, documentTypeLabels, DocumentType } from "@/types/document";
 import { toast } from "@/components/ui/sonner";
 
+export type CompressionLevel = "auto" | "light" | "medium" | "strong";
+
+const compressionLabels: Record<CompressionLevel, string> = {
+  auto: "Otomatis",
+  light: "Ringan",
+  medium: "Sedang",
+  strong: "Kuat",
+};
+
 interface DocumentUploadModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpload: (file: File, type: DocumentType) => void;
+  onUpload: (file: File, type: DocumentType, compression?: CompressionLevel) => void;
 }
 
 export function DocumentUploadModal({
@@ -32,9 +41,12 @@ export function DocumentUploadModal({
 }: DocumentUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedType, setSelectedType] = useState<DocumentType | "">("");
+  const [compression, setCompression] = useState<CompressionLevel | "">("");
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const isImageFile = selectedFile?.type.startsWith("image/");
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -64,19 +76,23 @@ export function DocumentUploadModal({
       "image/webp",
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Tipe file tidak didukung. Gunakan PDF, JPG, PNG, WEBP, DOC, atau DOCX.");
+      toast.error("Tipe file tidak didukung. Gunakan PDF, JPG, PNG, WEBP, DOC, DOCX, XLS, atau XLSX.");
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("Ukuran file maksimal 10MB");
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error("Ukuran file maksimal 25MB");
       return;
     }
 
     setSelectedFile(file);
+    // Reset compression when file changes
+    setCompression("");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,9 +118,9 @@ export function DocumentUploadModal({
 
     setIsUploading(true);
     try {
-      // Simulate upload delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      onUpload(selectedFile, selectedType);
+      // Pass compression only for image files
+      const compressionValue = isImageFile && compression ? compression : undefined;
+      onUpload(selectedFile, selectedType, compressionValue);
       toast.success("Dokumen berhasil diupload");
       handleClose();
     } catch (error) {
@@ -117,6 +133,7 @@ export function DocumentUploadModal({
   const handleClose = () => {
     setSelectedFile(null);
     setSelectedType("");
+    setCompression("");
     onOpenChange(false);
   };
 
@@ -145,14 +162,18 @@ export function DocumentUploadModal({
               type="file"
               className="hidden"
               onChange={handleChange}
-              accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx"
+              accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.xls,.xlsx"
             />
 
             {selectedFile ? (
               <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <FileText className="h-5 w-5 text-primary" />
+                    {isImageFile ? (
+                      <ImageIcon className="h-5 w-5 text-primary" />
+                    ) : (
+                      <FileText className="h-5 w-5 text-primary" />
+                    )}
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate">{selectedFile.name}</p>
@@ -187,7 +208,7 @@ export function DocumentUploadModal({
                     </button>
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    PDF, JPG, PNG, WEBP, DOC, DOCX (Maks. 10MB)
+                    PDF, JPG, PNG, WEBP, DOC, DOCX, XLS, XLSX (Maks. 25MB)
                   </p>
                 </div>
               </div>
@@ -196,7 +217,7 @@ export function DocumentUploadModal({
 
           {/* Document Type Selection */}
           <div className="space-y-2">
-            <Label>Tipe Dokumen</Label>
+            <Label>Tipe Dokumen <span className="text-destructive">*</span></Label>
             <Select
               value={selectedType}
               onValueChange={(value) => setSelectedType(value as DocumentType)}
@@ -213,6 +234,30 @@ export function DocumentUploadModal({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Compression Selection - Only show for image files */}
+          {isImageFile && (
+            <div className="space-y-2">
+              <Label>Kompresi Gambar (Opsional)</Label>
+              <Select
+                value={compression}
+                onValueChange={(value) => setCompression(value as CompressionLevel)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih level kompresi" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">{compressionLabels.auto}</SelectItem>
+                  <SelectItem value="light">{compressionLabels.light}</SelectItem>
+                  <SelectItem value="medium">{compressionLabels.medium}</SelectItem>
+                  <SelectItem value="strong">{compressionLabels.strong}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Kompresi dapat mengurangi ukuran file gambar untuk upload lebih cepat.
+              </p>
+            </div>
+          )}
         </div>
 
         <DialogFooter>
