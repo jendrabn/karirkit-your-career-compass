@@ -55,7 +55,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { DocumentFilterModal, DocumentFilterValues } from "@/components/documents/DocumentFilterModal";
-import { DocumentUploadModal } from "@/components/documents/DocumentUploadModal";
+import { DocumentUploadModal, CompressionLevel } from "@/components/documents/DocumentUploadModal";
 import { mockDocuments } from "@/data/mockDocuments";
 import { Document, documentTypeLabels, DocumentType } from "@/types/document";
 import { toast } from "@/components/ui/sonner";
@@ -208,7 +208,17 @@ export default function Documents() {
     setMassDeleteDialogOpen(false);
   };
 
-  const handleUpload = (file: File, type: DocumentType) => {
+  const handleUpload = (file: File, type: DocumentType, compression?: CompressionLevel) => {
+    // In real implementation, this would call the API:
+    // POST /documents?compression={compression}
+    // FormData with: type, file
+    console.log("Uploading document:", {
+      file: file.name,
+      type,
+      compression: compression || "none",
+      size: file.size,
+    });
+
     const newDocument: Document = {
       id: `doc-${Date.now()}`,
       user_id: "user-1",
