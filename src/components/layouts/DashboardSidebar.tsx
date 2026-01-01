@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart, Users, Sun, Moon, Monitor, Briefcase } from "lucide-react";
+import { LayoutDashboard, FileText, ChevronDown, ChevronRight, User, Lock, LogOut, FolderOpen, BookOpen, Tag, FileStack, Shield, Heart, Users, Sun, Moon, Monitor, Briefcase, Files } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import {
   Sidebar,
@@ -57,6 +57,11 @@ const menuItems = [
     title: "Portfolio",
     url: "/portfolios",
     icon: FolderOpen,
+  },
+  {
+    title: "Dokumen",
+    url: "/documents",
+    icon: Files,
   },
 ];
 

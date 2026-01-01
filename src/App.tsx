@@ -44,6 +44,7 @@ import PortfolioEdit from "./pages/PortfolioEdit";
 import PortfolioShow from "./pages/PortfolioShow";
 import PortfolioList from "./pages/PortfolioList";
 import PortfolioDetail from "./pages/PortfolioDetail";
+import Documents from "./pages/Documents";
 import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
 import OTPVerification from "./pages/OTPVerification";
@@ -114,6 +115,7 @@ const App = () => (
           <Route path="/portfolios/:id" element={<PortfolioShow />} />
           <Route path="/me/:username" element={<PortfolioList />} />
           <Route path="/me/:username/:id" element={<PortfolioDetail />} />
+          <Route path="/documents" element={<Documents />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/jobs" element={<Jobs />} />
