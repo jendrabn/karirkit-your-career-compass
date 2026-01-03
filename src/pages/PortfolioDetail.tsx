@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ExternalLink, Github, Calendar, Briefcase, MapPin, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, Github, Calendar, Briefcase, MapPin, ArrowLeft, ChevronLeft, ChevronRight, Linkedin, Twitter, Instagram, Facebook, Youtube, Globe, FolderOpen, User } from "lucide-react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -9,12 +9,35 @@ import { Separator } from "@/components/ui/separator";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { getPortfolioDetailData } from "@/data/mockPortfolios";
-import { projectTypeLabels } from "@/types/portfolio";
+import { projectTypeLabels, SocialPlatform } from "@/types/portfolio";
 
 const monthNames = [
   "Januari", "Februari", "Maret", "April", "Mei", "Juni",
   "Juli", "Agustus", "September", "Oktober", "November", "Desember"
 ];
+
+const getSocialIcon = (platform: SocialPlatform) => {
+  const iconClass = "h-4 w-4";
+  switch (platform) {
+    case "linkedin":
+      return <Linkedin className={iconClass} />;
+    case "github":
+      return <Github className={iconClass} />;
+    case "twitter":
+      return <Twitter className={iconClass} />;
+    case "instagram":
+      return <Instagram className={iconClass} />;
+    case "facebook":
+      return <Facebook className={iconClass} />;
+    case "youtube":
+      return <Youtube className={iconClass} />;
+    case "dribbble":
+    case "behance":
+    case "website":
+    default:
+      return <Globe className={iconClass} />;
+  }
+};
 
 export default function PortfolioDetail() {
   const { username, id } = useParams<{ username: string; id: string }>();
@@ -29,9 +52,12 @@ export default function PortfolioDetail() {
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground">Portfolio tidak ditemukan</h1>
-            <p className="text-muted-foreground mt-2">Portfolio yang Anda cari tidak tersedia.</p>
-            <Button className="mt-4" onClick={() => navigate(-1)}>
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-4">
+              <FolderOpen className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground mb-2">Portfolio tidak ditemukan</h1>
+            <p className="text-muted-foreground mb-6">Portfolio yang Anda cari tidak tersedia.</p>
+            <Button onClick={() => navigate(-1)}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Kembali
             </Button>
@@ -60,71 +86,104 @@ export default function PortfolioDetail() {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
 
-      {/* Breadcrumb */}
-      <div className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to={`/me/${username}`} className="hover:text-primary transition-colors">
-              {user.name}
-            </Link>
-            <span>/</span>
-            <span className="text-foreground font-medium line-clamp-1">{portfolio.title}</span>
+      {/* Hero Section with Cover */}
+      <section className="relative">
+        {/* Cover Image */}
+        <div className="h-64 lg:h-80 xl:h-96 relative overflow-hidden">
+          <img
+            src={portfolio.cover}
+            alt={portfolio.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+        </div>
+
+        {/* Breadcrumb */}
+        <div className="absolute top-4 left-0 right-0 z-10">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center gap-2 text-sm">
+              <Link 
+                to={`/me/${username}`} 
+                className="flex items-center gap-2 bg-background/80 backdrop-blur-sm px-3 py-1.5 rounded-full hover:bg-background transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">{user.name}</span>
+                <span className="sm:hidden">Kembali</span>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Content */}
-      <main className="flex-1 py-8 lg:py-12">
+      <main className="flex-1 -mt-20 relative z-10">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-            {/* Left Content - 3 columns */}
-            <div className="lg:col-span-3 space-y-8">
-              {/* Cover Image */}
-              <div className="aspect-video rounded-xl overflow-hidden bg-muted shadow-lg">
-                <img
-                  src={portfolio.cover}
-                  alt={portfolio.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            {/* Left Content - 2 columns */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Title Card */}
+              <Card className="shadow-xl border-border/50">
+                <CardContent className="p-6 lg:p-8">
+                  <div className="flex flex-wrap items-center gap-2 mb-4">
+                    <Badge variant="default">
+                      {projectTypeLabels[portfolio.project_type]}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {portfolio.industry}
+                    </Badge>
+                  </div>
+                  
+                  <h1 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground mb-4">
+                    {portfolio.title}
+                  </h1>
+                  
+                  <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+                    {portfolio.sort_description}
+                  </p>
 
-              {/* Title & Meta */}
-              <div>
-                <Badge className="mb-4" variant="secondary">
-                  {projectTypeLabels[portfolio.project_type]}
-                </Badge>
-                <h1 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-                  {portfolio.title}
-                </h1>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  {portfolio.sort_description}
-                </p>
-              </div>
+                  {/* Meta Info */}
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
+                    <span className="flex items-center gap-2">
+                      <Briefcase className="h-4 w-4 text-primary" />
+                      {portfolio.role_title}
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      {monthNames[portfolio.month - 1]} {portfolio.year}
+                    </span>
+                  </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
-                {portfolio.live_url && (
-                  <Button size="lg" asChild>
-                    <a href={portfolio.live_url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Lihat Live Demo
-                    </a>
-                  </Button>
-                )}
-                {portfolio.repo_url && (
-                  <Button size="lg" variant="outline" asChild>
-                    <a href={portfolio.repo_url} target="_blank" rel="noopener noreferrer">
-                      <Github className="h-4 w-4 mr-2" />
-                      Source Code
-                    </a>
-                  </Button>
-                )}
-              </div>
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-3">
+                    {portfolio.live_url && (
+                      <Button size="lg" asChild className="shadow-lg hover:shadow-xl transition-shadow">
+                        <a href={portfolio.live_url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Lihat Live Demo
+                        </a>
+                      </Button>
+                    )}
+                    {portfolio.repo_url && (
+                      <Button size="lg" variant="outline" asChild>
+                        <a href={portfolio.repo_url} target="_blank" rel="noopener noreferrer">
+                          <Github className="h-4 w-4 mr-2" />
+                          Source Code
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
               {/* Description */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Tentang Proyek</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                      <FolderOpen className="h-4 w-4 text-primary" />
+                    </span>
+                    Tentang Proyek
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="prose prose-sm max-w-none">
@@ -141,11 +200,23 @@ export default function PortfolioDetail() {
               {portfolio.medias.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Galeri Proyek</CardTitle>
+                    <CardTitle className="flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                          <MapPin className="h-4 w-4 text-primary" />
+                        </span>
+                        Galeri Proyek
+                      </span>
+                      {portfolio.medias.length > 1 && (
+                        <Badge variant="outline">
+                          {currentMediaIndex + 1} / {portfolio.medias.length}
+                        </Badge>
+                      )}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="relative">
-                      <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                    <div className="relative group">
+                      <div className="aspect-video rounded-xl overflow-hidden bg-muted shadow-lg">
                         <img
                           src={portfolio.medias[currentMediaIndex].path}
                           alt={portfolio.medias[currentMediaIndex].caption}
@@ -158,7 +229,7 @@ export default function PortfolioDetail() {
                           <Button
                             variant="secondary"
                             size="icon"
-                            className="absolute left-3 top-1/2 -translate-y-1/2 shadow-lg"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={prevMedia}
                           >
                             <ChevronLeft className="h-5 w-5" />
@@ -166,7 +237,7 @@ export default function PortfolioDetail() {
                           <Button
                             variant="secondary"
                             size="icon"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 shadow-lg"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={nextMedia}
                           >
                             <ChevronRight className="h-5 w-5" />
@@ -175,21 +246,21 @@ export default function PortfolioDetail() {
                       )}
                     </div>
 
-                    <p className="text-sm text-muted-foreground text-center mt-4">
+                    <p className="text-sm text-muted-foreground text-center mt-4 italic">
                       {portfolio.medias[currentMediaIndex].caption}
                     </p>
 
                     {/* Thumbnails */}
                     {portfolio.medias.length > 1 && (
-                      <div className="flex gap-3 mt-4 justify-center flex-wrap">
+                      <div className="flex gap-2 mt-6 justify-center flex-wrap">
                         {portfolio.medias.map((media, idx) => (
                           <button
                             key={media.id}
                             onClick={() => setCurrentMediaIndex(idx)}
-                            className={`w-20 h-14 rounded-lg overflow-hidden border-2 transition-all ${
+                            className={`w-16 h-12 lg:w-20 lg:h-14 rounded-lg overflow-hidden transition-all ${
                               idx === currentMediaIndex
-                                ? "border-primary ring-2 ring-primary/20"
-                                : "border-border opacity-70 hover:opacity-100"
+                                ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                                : "opacity-60 hover:opacity-100"
                             }`}
                           >
                             <img
@@ -204,91 +275,135 @@ export default function PortfolioDetail() {
                   </CardContent>
                 </Card>
               )}
-            </div>
 
-            {/* Right Sidebar - 2 columns */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Author Card */}
+              {/* Technologies */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Dibuat oleh</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
+                      <span className="text-primary font-bold text-sm">&lt;/&gt;</span>
+                    </span>
+                    Teknologi yang Digunakan
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {portfolio.tools.map((tool) => (
+                      <Badge 
+                        key={tool.id} 
+                        variant="secondary" 
+                        className="text-sm px-4 py-2 bg-muted hover:bg-muted/80 transition-colors"
+                      >
+                        {tool.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Sidebar */}
+            <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+              {/* Author Card */}
+              <Card className="shadow-lg border-border/50 overflow-hidden">
+                <div className="h-16 bg-gradient-to-r from-primary/20 to-primary/10" />
+                <CardContent className="pt-0 -mt-8">
                   <Link
                     to={`/me/${username}`}
-                    className="flex items-center gap-4 group"
+                    className="flex flex-col items-center text-center group"
                   >
-                    <Avatar className="h-16 w-16 ring-2 ring-primary/20">
+                    <Avatar className="h-20 w-20 ring-4 ring-background shadow-lg mb-4">
                       <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+                      <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
                         {user.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
-                        {user.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        @{user.username}
-                      </p>
-                    </div>
+                    <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
+                      {user.name}
+                    </h3>
+                    <p className="text-sm text-primary mb-2">
+                      @{user.username}
+                    </p>
                   </Link>
-                  <Separator className="my-4" />
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  
+                  <p className="text-sm text-muted-foreground text-center leading-relaxed mb-4">
                     {user.headline}
                   </p>
-                  <Button variant="outline" className="w-full mt-4" asChild>
+
+                  {user.location && (
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-4">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {user.location}
+                    </div>
+                  )}
+
+                  {/* Social Links */}
+                  {user.social_links.length > 0 && (
+                    <>
+                      <Separator className="my-4" />
+                      <div className="flex items-center justify-center gap-1.5">
+                        {user.social_links.map((social) => (
+                          <Button
+                            key={social.id}
+                            variant="ghost"
+                            size="icon"
+                            asChild
+                            className="h-9 w-9 rounded-full hover:bg-primary/10 hover:text-primary"
+                          >
+                            <a href={social.url} target="_blank" rel="noopener noreferrer" title={social.platform}>
+                              {getSocialIcon(social.platform)}
+                            </a>
+                          </Button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  <Separator className="my-4" />
+                  
+                  <Button variant="outline" className="w-full" asChild>
                     <Link to={`/me/${username}`}>
+                      <User className="h-4 w-4 mr-2" />
                       Lihat Semua Portfolio
                     </Link>
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Project Info */}
+              {/* Project Info Card */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Detail Proyek</CardTitle>
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-base">Detail Proyek</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <Briefcase className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Peran</p>
-                      <p className="font-medium">{portfolio.role_title}</p>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 shrink-0">
+                      <Briefcase className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Peran</p>
+                      <p className="font-medium text-sm">{portfolio.role_title}</p>
                     </div>
                   </div>
                   <Separator />
                   <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Industri</p>
-                      <p className="font-medium">{portfolio.industry}</p>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 shrink-0">
+                      <MapPin className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Industri</p>
+                      <p className="font-medium text-sm">{portfolio.industry}</p>
                     </div>
                   </div>
                   <Separator />
                   <div className="flex items-start gap-3">
-                    <Calendar className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Periode</p>
-                      <p className="font-medium">{monthNames[portfolio.month - 1]} {portfolio.year}</p>
+                    <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/10 shrink-0">
+                      <Calendar className="h-4 w-4 text-primary" />
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Tools */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Teknologi yang Digunakan</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {portfolio.tools.map((tool) => (
-                      <Badge key={tool.id} variant="secondary" className="text-sm px-3 py-1">
-                        {tool.name}
-                      </Badge>
-                    ))}
+                    <div className="min-w-0">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Periode</p>
+                      <p className="font-medium text-sm">{monthNames[portfolio.month - 1]} {portfolio.year}</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

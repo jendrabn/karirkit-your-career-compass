@@ -34,12 +34,26 @@ export interface Portfolio {
   tools: PortfolioTool[];
 }
 
+export type SocialPlatform = "linkedin" | "github" | "twitter" | "instagram" | "facebook" | "youtube" | "dribbble" | "behance" | "website";
+
+export interface SocialLink {
+  id: string;
+  user_id: string;
+  platform: SocialPlatform;
+  url: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface PortfolioUser {
   id: string;
   name: string;
   username: string;
-  avatar: string;
   headline: string;
+  bio: string;
+  location: string;
+  avatar: string;
+  social_links: SocialLink[];
 }
 
 export interface PortfolioListResponse {
@@ -57,4 +71,16 @@ export const projectTypeLabels: Record<ProjectType, string> = {
   personal: "Personal",
   freelance: "Freelance",
   academic: "Akademik",
+};
+
+export const socialPlatformLabels: Record<SocialPlatform, string> = {
+  linkedin: "LinkedIn",
+  github: "GitHub",
+  twitter: "Twitter",
+  instagram: "Instagram",
+  facebook: "Facebook",
+  youtube: "YouTube",
+  dribbble: "Dribbble",
+  behance: "Behance",
+  website: "Website",
 };
