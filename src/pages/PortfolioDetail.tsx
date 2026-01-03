@@ -116,9 +116,9 @@ export default function PortfolioDetail() {
       </section>
 
       {/* Main Content */}
-      <main className="flex-1 -mt-20 relative z-10">
+      <main className="flex-1 -mt-20 relative z-10 pb-12 lg:pb-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
             {/* Left Content - 2 columns */}
             <div className="lg:col-span-2 space-y-8">
               {/* Title Card */}
@@ -303,7 +303,7 @@ export default function PortfolioDetail() {
             </div>
 
             {/* Right Sidebar */}
-            <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+            <div className="space-y-6">
               {/* Author Card */}
               <Card className="shadow-lg border-border/50 overflow-hidden">
                 <div className="h-16 bg-gradient-to-r from-primary/20 to-primary/10" />
@@ -408,16 +408,19 @@ export default function PortfolioDetail() {
                 </CardContent>
               </Card>
 
-              {/* Back Button */}
-              <Button 
-                variant="ghost" 
-                className="w-full" 
-                onClick={() => navigate(`/me/${username}`)}
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Kembali ke Portfolio
-              </Button>
             </div>
+          </div>
+          
+          {/* Back Button - Full Width at Bottom */}
+          <div className="mt-8 lg:hidden">
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={() => navigate(`/me/${username}`)}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Kembali ke Portfolio
+            </Button>
           </div>
         </div>
       </main>
