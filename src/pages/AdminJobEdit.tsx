@@ -34,7 +34,7 @@ export default function AdminJobEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const job = mockJobs.find(j => j.id === id);
-  const [poster, setPoster] = useState(job?.poster || "");
+  const [poster, setPoster] = useState(job?.medias?.[0]?.path || "");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -42,9 +42,11 @@ export default function AdminJobEdit() {
       title: job.title, company_id: job.company_id, job_role_id: job.job_role_id, city_id: job.city_id,
       job_type: job.job_type, work_system: job.work_system, education_level: job.education_level,
       min_years_of_experience: job.min_years_of_experience, max_years_of_experience: job.max_years_of_experience || undefined,
-      description: job.description, requirements: job.requirements, salary_min: job.salary_min, salary_max: job.salary_max,
+      description: job.description, requirements: job.requirements, 
+      salary_min: typeof job.salary_min === "string" ? parseInt(job.salary_min) : job.salary_min, 
+      salary_max: typeof job.salary_max === "string" ? parseInt(job.salary_max) : job.salary_max,
       talent_quota: job.talent_quota, job_url: job.job_url, contact_name: job.contact_name, contact_email: job.contact_email,
-      contact_phone: job.contact_phone, poster: job.poster, status: job.status,
+      contact_phone: job.contact_phone, poster: job.medias?.[0]?.path || "", status: job.status,
     } : undefined,
   });
 
