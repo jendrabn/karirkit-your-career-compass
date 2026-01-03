@@ -4,8 +4,44 @@ export const mockPortfolioUser = {
   id: "user-1",
   name: "Jendra Bayu",
   username: "jendrabayu",
-  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
   headline: "Full Stack Developer | React & Node.js Enthusiast",
+  bio: "Passionate developer with 5+ years of experience building scalable web applications. I love creating beautiful, performant, and user-friendly interfaces that solve real problems.",
+  location: "Jakarta, Indonesia",
+  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+  social_links: [
+    {
+      id: "social-1",
+      user_id: "user-1",
+      platform: "linkedin" as const,
+      url: "https://linkedin.com/in/jendrabayu",
+      created_at: "2024-01-01T00:00:00.000Z",
+      updated_at: "2024-01-01T00:00:00.000Z",
+    },
+    {
+      id: "social-2",
+      user_id: "user-1",
+      platform: "github" as const,
+      url: "https://github.com/jendrabayu",
+      created_at: "2024-01-01T00:00:00.000Z",
+      updated_at: "2024-01-01T00:00:00.000Z",
+    },
+    {
+      id: "social-3",
+      user_id: "user-1",
+      platform: "twitter" as const,
+      url: "https://twitter.com/jendrabayu",
+      created_at: "2024-01-01T00:00:00.000Z",
+      updated_at: "2024-01-01T00:00:00.000Z",
+    },
+    {
+      id: "social-4",
+      user_id: "user-1",
+      platform: "website" as const,
+      url: "https://jendrabayu.dev",
+      created_at: "2024-01-01T00:00:00.000Z",
+      updated_at: "2024-01-01T00:00:00.000Z",
+    },
+  ],
 };
 
 export const mockPortfolios = [
