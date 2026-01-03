@@ -16,19 +16,19 @@ export function JobSearchBar({ value, onChange, onSearch }: JobSearchBarProps) {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 bg-card rounded-lg border border-border p-1.5 shadow-sm">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
-          placeholder="Cari posisi, perusahaan, atau kata kunci..."
+          placeholder="Cari posisi, perusahaan..."
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="pl-10"
+          className="pl-11 border-0 shadow-none focus-visible:ring-0 bg-transparent text-base h-11"
         />
       </div>
-      <Button onClick={onSearch}>
-        Cari
+      <Button onClick={onSearch} size="lg" className="px-6">
+        Cari Lowongan
       </Button>
     </div>
   );

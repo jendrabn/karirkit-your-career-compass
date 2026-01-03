@@ -40,6 +40,12 @@ export interface JobRole {
   updated_at: string;
 }
 
+export interface JobMedia {
+  id: string;
+  job_id: string;
+  path: string;
+}
+
 export interface Company {
   id: string;
   name: string;
@@ -49,6 +55,7 @@ export interface Company {
   employee_size: EmployeeSize;
   business_sector: string;
   website_url: string;
+  job_count: number;
   created_at: string;
   updated_at: string;
 }
@@ -67,18 +74,18 @@ export interface Job {
   max_years_of_experience: number | null;
   description: string;
   requirements: string;
-  salary_min: number;
-  salary_max: number;
+  salary_min: string | number;
+  salary_max: string | number;
   talent_quota: number;
   job_url: string;
   contact_name: string;
   contact_email: string;
   contact_phone: string;
-  poster: string;
   status: JobStatus;
   expiration_date: string;
   created_at: string;
   updated_at: string;
+  medias: JobMedia[];
   company: Company;
   job_role: JobRole;
   city: City;

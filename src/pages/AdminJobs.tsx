@@ -292,7 +292,7 @@ export default function AdminJobs() {
                       {job.city.name}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {formatSalary(job.salary_min)}
+                      {formatSalary(typeof job.salary_min === "string" ? parseInt(job.salary_min) : job.salary_min)}
                     </TableCell>
                     <TableCell>
                       <Badge variant={getStatusBadgeVariant(job.status)}>

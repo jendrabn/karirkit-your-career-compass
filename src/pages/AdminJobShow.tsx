@@ -161,7 +161,7 @@ export default function AdminJobShow() {
             </CardHeader>
             <CardContent>
               <p className="text-xl font-bold text-primary">
-                {formatSalary(job.salary_min)} - {formatSalary(job.salary_max)}
+                {formatSalary(typeof job.salary_min === "string" ? parseInt(job.salary_min) : job.salary_min)} - {formatSalary(typeof job.salary_max === "string" ? parseInt(job.salary_max) : job.salary_max)}
               </p>
               <p className="text-sm text-muted-foreground mt-1">per bulan</p>
             </CardContent>

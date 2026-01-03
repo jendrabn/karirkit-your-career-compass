@@ -6,7 +6,7 @@ import { JobSearchBar } from "@/components/jobs/JobSearchBar";
 import { JobCard } from "@/components/jobs/JobCard";
 import { JobFilterSidebar, JobFilters } from "@/components/jobs/JobFilterSidebar";
 import { JobPagination } from "@/components/jobs/JobPagination";
-import { getMockJobsResponse, mockJobRoles, mockCities } from "@/data/mockJobs";
+import { getMockJobsResponse, mockJobRoles, mockCities, mockCompanies } from "@/data/mockJobs";
 import { Job } from "@/types/job";
 
 export default function Jobs() {
@@ -37,7 +37,10 @@ export default function Jobs() {
         work_system: filters.work_systems?.[0],
         job_role_id: filters.job_role_ids?.[0],
         city_id: filters.city_ids?.[0],
+        company_id: filters.company_ids?.[0],
         experience_min: filters.experience_min,
+        salary_min: filters.salary_min,
+        education_level: filters.education_levels?.[0],
       });
 
       setJobs(response.data.items);
@@ -108,6 +111,7 @@ export default function Jobs() {
                   <JobFilterSidebar
                     jobRoles={mockJobRoles}
                     cities={mockCities}
+                    companies={mockCompanies}
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     onClearFilters={handleClearFilters}
@@ -128,7 +132,7 @@ export default function Jobs() {
                     </p>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3">
                     {jobs.map((job) => (
                       <JobCard key={job.id} job={job} />
                     ))}
@@ -153,6 +157,7 @@ export default function Jobs() {
                   <JobFilterSidebar
                     jobRoles={mockJobRoles}
                     cities={mockCities}
+                    companies={mockCompanies}
                     filters={filters}
                     onFilterChange={handleFilterChange}
                     onClearFilters={handleClearFilters}
