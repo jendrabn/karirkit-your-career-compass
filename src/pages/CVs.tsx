@@ -17,9 +17,9 @@ import {
   ChevronsRight,
   FileText,
   Sparkles,
-  Settings,
   Calendar,
-  Users,
+  Briefcase,
+  GraduationCap,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -465,82 +465,132 @@ function CVCard({
   onDelete,
   formatRelativeDate,
 }: CVCardProps) {
+  const latestExperience = cv.experiences?.[0];
+  const latestEducation = cv.educations?.[0];
+  const skillsCount = cv.skills?.length || 0;
+  const certificatesCount = cv.certificates?.length || 0;
+  const organizationsCount = cv.organizations?.length || 0;
+
   return (
     <TooltipProvider>
       <Card className={cn(
         "transition-all hover:shadow-md",
         isSelected && "ring-2 ring-primary border-primary"
       )}>
-        <CardContent className="p-4 md:p-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Checkbox & Icon */}
-            <div className="flex items-start gap-3">
+        <CardContent className="p-4 md:p-5">
+          <div className="flex gap-3">
+            {/* Checkbox */}
+            <div className="flex-shrink-0 pt-1">
               <Checkbox 
                 checked={isSelected}
                 onCheckedChange={onSelect}
-                className="mt-1"
               />
-              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
-                <FileText className="h-6 w-6 text-muted-foreground" />
-              </div>
             </div>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+              {/* Header Row */}
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-semibold text-lg truncate">{cv.name}</h3>
+                  {/* Headline */}
+                  <h3 className="font-semibold text-base md:text-lg truncate">
+                    {cv.headline || "Belum ada headline"}
+                  </h3>
+                  
+                  {/* Template & Language */}
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
                     {cv.template_id && (
                       <Badge variant="outline" className="text-xs">
-                        Draft
+                        <FileText className="h-3 w-3 mr-1" />
+                        {cv.template?.name || "Template"}
+                      </Badge>
+                    )}
+                    {cv.language && (
+                      <Badge variant="secondary" className="text-xs">
+                        {cv.language === "id" ? "Indonesia" : cv.language === "en" ? "English" : cv.language}
                       </Badge>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1 flex-wrap">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5" />
-                      Terakhir diubah {formatRelativeDate(cv.updated_at)}
-                    </span>
-                    <span className="hidden md:inline">·</span>
-                    <span className="flex items-center gap-1">
-                      Dibuat pada {format(new Date(cv.created_at), "d MMM yyyy", { locale: localeId })}
-                    </span>
-                  </div>
-                  {cv.headline && (
-                    <div className="flex items-center gap-1.5 mt-2">
-                      <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
-                        <Sparkles className="h-3 w-3 mr-1" />
-                        {cv.headline}
-                      </Badge>
-                    </div>
-                  )}
                 </div>
 
-                {/* Stats */}
-                <div className="flex items-center gap-4 md:gap-6 text-center">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Pengunjung</p>
-                    <p className="text-xl font-semibold text-primary">0</p>
+                {/* Last Updated */}
+                <div className="text-xs text-muted-foreground flex items-center gap-1 flex-shrink-0">
+                  <Calendar className="h-3 w-3" />
+                  {formatRelativeDate(cv.updated_at)}
+                </div>
+              </div>
+
+              {/* Info Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+                {/* Latest Experience */}
+                <div className="flex items-start gap-2 p-2.5 rounded-md bg-muted/50">
+                  <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Briefcase className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground">Pengalaman Terakhir</p>
+                    {latestExperience ? (
+                      <p className="text-sm font-medium truncate">{latestExperience.job_title}</p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">Belum ada</p>
+                    )}
+                    {latestExperience?.company_name && (
+                      <p className="text-xs text-muted-foreground truncate">{latestExperience.company_name}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Latest Education */}
+                <div className="flex items-start gap-2 p-2.5 rounded-md bg-muted/50">
+                  <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <GraduationCap className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground">Pendidikan Terakhir</p>
+                    {latestEducation ? (
+                      <p className="text-sm font-medium truncate">{latestEducation.school_name}</p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">Belum ada</p>
+                    )}
+                    {latestEducation?.degree && (
+                      <p className="text-xs text-muted-foreground truncate capitalize">{latestEducation.degree}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Skills Count */}
+                <div className="flex items-start gap-2 p-2.5 rounded-md bg-muted/50">
+                  <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground">Keahlian</p>
+                    <p className="text-sm font-medium">{skillsCount} skill</p>
+                    {certificatesCount > 0 && (
+                      <p className="text-xs text-muted-foreground">{certificatesCount} sertifikat</p>
+                    )}
                   </div>
                 </div>
               </div>
 
+              {/* About Preview */}
+              {cv.about && (
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                  {cv.about}
+                </p>
+              )}
+
               {/* Actions */}
-              <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-border/60">
+              <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-border/60">
                 <Button size="sm" onClick={onEdit} className="gap-1.5">
                   <Pencil className="h-3.5 w-3.5" />
                   Ubah
-                </Button>
-                <Button size="sm" variant="outline" disabled className="gap-1.5">
-                  <Users className="h-3.5 w-3.5" />
-                  Pengunjung
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="sm" variant="outline" className="gap-1.5">
                       <Download className="h-3.5 w-3.5" />
-                      PDF
+                      Unduh
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="z-50 bg-popover">
@@ -578,17 +628,11 @@ function CVCard({
                   disabled
                 >
                   <Sparkles className="h-3.5 w-3.5" />
-                  Cek CV dengan AI
+                  <span className="hidden sm:inline">Cek CV dengan AI</span>
+                  <span className="sm:hidden">AI</span>
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Soon</Badge>
                 </Button>
                 <div className="flex-1" />
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button size="sm" variant="ghost" className="px-2" disabled>
-                      <Settings className="h-3.5 w-3.5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Pengaturan</TooltipContent>
-                </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
