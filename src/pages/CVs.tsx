@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
+import { id as localeId } from "date-fns/locale";
 import {
   Search,
   Filter,
   Plus,
-  ArrowUpDown,
   Eye,
   Pencil,
   Copy,
@@ -16,8 +16,10 @@ import {
   ChevronsLeft,
   ChevronsRight,
   FileText,
-  User,
-  MoreVertical,
+  Sparkles,
+  Settings,
+  Calendar,
+  Users,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -26,14 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -47,9 +42,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
@@ -68,9 +60,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CVFilterModal, FilterValues } from "@/components/cv/CVFilterModal";
-import { CVColumnToggle, ColumnVisibility, defaultColumnVisibility } from "@/components/cv/CVColumnToggle";
 import { mockCVs } from "@/data/mockCVs";
-import { CV, DEGREE_OPTIONS } from "@/types/cv";
+import { CV } from "@/types/cv";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -82,7 +73,6 @@ export default function CVs() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState<FilterValues>({});
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(defaultColumnVisibility);
   const [sortField, setSortField] = useState<SortField | null>("updated_at");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [cvs, setCvs] = useState<CV[]>(mockCVs);
@@ -94,15 +84,6 @@ export default function CVs() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortOrder("asc");
-    }
-  };
 
   const filteredAndSortedCVs = useMemo(() => {
     let result = [...cvs];
@@ -199,44 +180,51 @@ export default function CVs() {
     toast.success("CV berhasil diduplikasi");
   };
 
-  const handleDownload = (cv: CV, format: "docx" | "pdf") => {
-    if (format === "pdf") {
+  const handleDownload = (cv: CV, formatType: "docx" | "pdf") => {
+    if (formatType === "pdf") {
       toast.info("Fitur export PDF akan segera hadir");
       return;
     }
-    toast.success(`Mengunduh CV dalam format ${format.toUpperCase()}`);
+    toast.success(`Mengunduh CV dalam format ${formatType.toUpperCase()}`);
   };
 
-  // Helper to get latest experience
-  const getLatestExperience = (cv: CV) => {
-    if (!cv.experiences || cv.experiences.length === 0) return null;
-    return cv.experiences[0];
+  const formatRelativeDate = (dateString: string) => {
+    return formatDistanceToNow(new Date(dateString), {
+      addSuffix: true,
+      locale: localeId,
+    });
   };
-
-  // Helper to get latest education
-  const getLatestEducation = (cv: CV) => {
-    if (!cv.educations || cv.educations.length === 0) return null;
-    return cv.educations[0];
-  };
-
-  const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="-ml-3 h-8 data-[state=open]:bg-accent uppercase text-xs font-medium tracking-wide text-muted-foreground hover:text-foreground"
-      onClick={() => handleSort(field)}
-    >
-      {children}
-      <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 opacity-50" />
-    </Button>
-  );
 
   return (
     <DashboardLayout>
       <PageHeader
-        title="CV"
+        title="CV Saya"
         subtitle="Kelola daftar riwayat hidup (CV) Anda."
-      />
+      >
+        <Button variant="outline" size="sm" disabled>
+          <FileText className="h-4 w-4 mr-2" />
+          Buat dari Profil
+        </Button>
+        <Button size="sm" onClick={() => navigate("/cvs/create")}>
+          <Plus className="h-4 w-4 mr-2" />
+          Buat CV
+        </Button>
+      </PageHeader>
+
+      {/* Info Banner */}
+      <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg flex items-center gap-3">
+        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+          <Sparkles className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1">
+          <p className="text-sm text-foreground">
+            Lengkapi profil Anda minimal 75% untuk membuat CV dari profil.{" "}
+            <button className="text-primary font-medium hover:underline">
+              Edit profil saya
+            </button>
+          </p>
+        </div>
+      </div>
 
       {/* Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -265,332 +253,146 @@ export default function CVs() {
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
-          <CVColumnToggle visibility={columnVisibility} onVisibilityChange={setColumnVisibility} />
-          <Button size="sm" onClick={() => navigate("/cvs/create")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Buat CV
-          </Button>
+          {paginatedCVs.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Checkbox 
+                id="selectAll"
+                checked={paginatedCVs.length > 0 && selectedIds.length === paginatedCVs.length}
+                onCheckedChange={handleSelectAll}
+              />
+              <label htmlFor="selectAll" className="text-sm text-muted-foreground cursor-pointer">
+                Pilih Semua
+              </label>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-card border border-border/60 rounded-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <TooltipProvider>
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[40px]">
-                    <Checkbox 
-                      checked={paginatedCVs.length > 0 && selectedIds.length === paginatedCVs.length}
-                      onCheckedChange={handleSelectAll}
-                    />
-                  </TableHead>
-                  {columnVisibility.headline && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Headline / Posisi</TableHead>
-                  )}
-                  {columnVisibility.about && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Ringkasan</TableHead>
-                  )}
-                  {columnVisibility.latest_experience && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Pengalaman Terakhir</TableHead>
-                  )}
-                  {columnVisibility.latest_education && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Pendidikan Terakhir</TableHead>
-                  )}
-                  {columnVisibility.skills_count && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Jumlah Skill</TableHead>
-                  )}
-                  {columnVisibility.updated_at && (
-                    <TableHead><SortableHeader field="updated_at">Terakhir Diperbarui</SortableHeader></TableHead>
-                  )}
-                  {columnVisibility.name && (
-                    <TableHead><SortableHeader field="name">Nama Pemilik</SortableHeader></TableHead>
-                  )}
-                  {columnVisibility.email && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Email</TableHead>
-                  )}
-                  {columnVisibility.phone && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">No. Telepon</TableHead>
-                  )}
-                  {columnVisibility.address && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Alamat</TableHead>
-                  )}
-                  {columnVisibility.photo && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Foto</TableHead>
-                  )}
-                  {columnVisibility.certificates_count && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Jumlah Sertifikat</TableHead>
-                  )}
-                  {columnVisibility.awards_count && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Jumlah Penghargaan</TableHead>
-                  )}
-                  {columnVisibility.organizations_count && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Organisasi</TableHead>
-                  )}
-                  <TableHead className="w-[60px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedCVs.length === 0 ? (
-                  <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={16} className="text-center py-16 text-muted-foreground">
-                      <div className="flex flex-col items-center gap-2">
-                        <FileText className="h-10 w-10 text-muted-foreground/50" />
-                        <p className="text-base font-medium">Tidak ada CV</p>
-                        <p className="text-sm">Mulai buat CV pertama Anda</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  paginatedCVs.map((cv, index) => {
-                    const latestExp = getLatestExperience(cv);
-                    const latestEdu = getLatestEducation(cv);
+      {/* CV Cards */}
+      <div className="space-y-4">
+        {paginatedCVs.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                <FileText className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Tidak ada CV</h3>
+              <p className="text-muted-foreground text-sm mb-4">Mulai buat CV pertama Anda</p>
+              <Button onClick={() => navigate("/cvs/create")}>
+                <Plus className="h-4 w-4 mr-2" />
+                Buat CV
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          paginatedCVs.map((cv) => (
+            <CVCard
+              key={cv.id}
+              cv={cv}
+              isSelected={selectedIds.includes(cv.id)}
+              onSelect={() => handleSelectOne(cv.id)}
+              onView={() => navigate(`/cvs/${cv.id}`)}
+              onEdit={() => navigate(`/cvs/${cv.id}/edit`)}
+              onDuplicate={() => handleDuplicate(cv)}
+              onDownload={handleDownload}
+              onDelete={() => handleDelete(cv.id)}
+              formatRelativeDate={formatRelativeDate}
+            />
+          ))
+        )}
+      </div>
 
-                    return (
-                      <TableRow
-                        key={cv.id}
-                        className={cn(
-                          index % 2 === 0 ? "bg-background" : "bg-muted/20",
-                          selectedIds.includes(cv.id) && "bg-primary/5"
-                        )}
-                      >
-                        <TableCell>
-                          <Checkbox 
-                            checked={selectedIds.includes(cv.id)}
-                            onCheckedChange={() => handleSelectOne(cv.id)}
-                          />
-                        </TableCell>
-                        {columnVisibility.headline && (
-                          <TableCell className="font-medium max-w-[200px]">
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="block truncate">{cv.headline}</span>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{cv.headline}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TableCell>
-                        )}
-                        {columnVisibility.about && (
-                          <TableCell className="max-w-[200px]">
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="block truncate text-muted-foreground">
-                                  {cv.about || "-"}
-                                </span>
-                              </TooltipTrigger>
-                              <TooltipContent className="max-w-[300px]">
-                                <p>{cv.about || "-"}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TableCell>
-                        )}
-                        {columnVisibility.latest_experience && (
-                          <TableCell>
-                            {latestExp ? (
-                              <div className="text-sm">
-                                <p className="font-medium truncate max-w-[150px]">{latestExp.job_title}</p>
-                                <p className="text-muted-foreground text-xs truncate max-w-[150px]">{latestExp.company_name}</p>
-                              </div>
-                            ) : (
-                              <span className="text-muted-foreground text-sm">-</span>
-                            )}
-                          </TableCell>
-                        )}
-                        {columnVisibility.latest_education && (
-                          <TableCell>
-                            {latestEdu ? (
-                              <div className="text-sm">
-                                <p className="font-medium truncate max-w-[150px]">
-                                  {DEGREE_OPTIONS.find(d => d.value === latestEdu.degree)?.label || latestEdu.degree}
-                                </p>
-                                <p className="text-muted-foreground text-xs truncate max-w-[150px]">{latestEdu.school_name}</p>
-                              </div>
-                            ) : (
-                              <span className="text-muted-foreground text-sm">-</span>
-                            )}
-                          </TableCell>
-                        )}
-                        {columnVisibility.skills_count && (
-                          <TableCell>
-                            <Badge variant="secondary">{cv.skills?.length || 0}</Badge>
-                          </TableCell>
-                        )}
-                        {columnVisibility.updated_at && (
-                          <TableCell className="text-muted-foreground">
-                            {format(new Date(cv.updated_at), "dd MMM yyyy")}
-                          </TableCell>
-                        )}
-                        {columnVisibility.name && (
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Avatar className="h-7 w-7">
-                                <AvatarImage src={cv.photo} />
-                                <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                                  {cv.name.charAt(0)}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span>{cv.name}</span>
-                            </div>
-                          </TableCell>
-                        )}
-                        {columnVisibility.email && (
-                          <TableCell>{cv.email}</TableCell>
-                        )}
-                        {columnVisibility.phone && (
-                          <TableCell>{cv.phone}</TableCell>
-                        )}
-                        {columnVisibility.address && (
-                          <TableCell className="max-w-[150px] truncate">{cv.address}</TableCell>
-                        )}
-                        {columnVisibility.photo && (
-                          <TableCell>
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage src={cv.photo} />
-                              <AvatarFallback className="bg-primary/10 text-primary">
-                                <User className="h-4 w-4" />
-                              </AvatarFallback>
-                            </Avatar>
-                          </TableCell>
-                        )}
-                        {columnVisibility.certificates_count && (
-                          <TableCell>
-                            <Badge variant="secondary">{cv.certificates?.length || 0}</Badge>
-                          </TableCell>
-                        )}
-                        {columnVisibility.awards_count && (
-                          <TableCell>
-                            <Badge variant="secondary">{cv.awards?.length || 0}</Badge>
-                          </TableCell>
-                        )}
-                        {columnVisibility.organizations_count && (
-                          <TableCell>
-                            <Badge variant="secondary">{cv.organizations?.length || 0}</Badge>
-                          </TableCell>
-                        )}
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="secondary" size="icon" className="h-8 w-8">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="z-50 bg-popover">
-                              <DropdownMenuItem onClick={() => navigate(`/cvs/${cv.id}`)}>
-                                <Eye className="h-4 w-4 mr-2" />
-                                Lihat
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => navigate(`/cvs/${cv.id}/edit`)}>
-                                <Pencil className="h-4 w-4 mr-2" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDuplicate(cv)}>
-                                <Copy className="h-4 w-4 mr-2" />
-                                Duplikasi
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => handleDownload(cv, "docx")}>
-                                <Download className="h-4 w-4 mr-2" />
-                                Download Docx
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                disabled
-                                className="text-muted-foreground"
-                              >
-                                <Download className="h-4 w-4 mr-2" />
-                                Download PDF (Segera Hadir)
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() => handleDelete(cv.id)}
-                                className="text-destructive focus:text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Hapus
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </TooltipProvider>
+      {/* Pagination */}
+      {filteredAndSortedCVs.length > 0 && (
+        <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-card border border-border/60 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Tampilkan</span>
+            <Select
+              value={String(perPage)}
+              onValueChange={(value) => {
+                setPerPage(Number(value));
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[70px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="z-50 bg-popover">
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+            <span>dari {filteredAndSortedCVs.length} data</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="px-3 text-sm">
+              Halaman {currentPage} dari {totalPages || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
+      )}
 
-        {/* Pagination */}
-        {filteredAndSortedCVs.length > 0 && (
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-4 py-4 border-t border-border/60">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Tampilkan</span>
-              <Select
-                value={String(perPage)}
-                onValueChange={(value) => {
-                  setPerPage(Number(value));
-                  setCurrentPage(1);
-                }}
-              >
-                <SelectTrigger className="w-[70px] h-8">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="z-50 bg-popover">
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-              <span>dari {filteredAndSortedCVs.length} data</span>
+      {/* AI CV Checker Promo */}
+      <Card className="mt-6 overflow-hidden">
+        <CardContent className="p-0">
+          <div className="flex flex-col md:flex-row items-center gap-4 p-6">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="h-12 w-12 text-primary" />
             </div>
-
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage(1)}
-                disabled={currentPage === 1}
-              >
-                <ChevronsLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="px-3 text-sm">
-                Halaman {currentPage} dari {totalPages || 1}
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages || totalPages === 0}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage === totalPages || totalPages === 0}
-              >
-                <ChevronsRight className="h-4 w-4" />
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-lg font-semibold mb-1">Perbaiki CV dengan AI</h3>
+              <p className="text-muted-foreground text-sm">
+                Pastikan CV sudah ATS-friendly dan dapatkan saran agar CV lebih menarik di mata HRD
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <Button variant="link" className="text-primary" disabled>
+                Cek CV
+                <Badge variant="secondary" className="ml-2 text-xs">Segera Hadir</Badge>
               </Button>
             </div>
           </div>
-        )}
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Filter Modal */}
       <CVFilterModal
@@ -636,5 +438,175 @@ export default function CVs() {
         </AlertDialogContent>
       </AlertDialog>
     </DashboardLayout>
+  );
+}
+
+// CV Card Component
+interface CVCardProps {
+  cv: CV;
+  isSelected: boolean;
+  onSelect: () => void;
+  onView: () => void;
+  onEdit: () => void;
+  onDuplicate: () => void;
+  onDownload: (cv: CV, format: "docx" | "pdf") => void;
+  onDelete: () => void;
+  formatRelativeDate: (date: string) => string;
+}
+
+function CVCard({
+  cv,
+  isSelected,
+  onSelect,
+  onView,
+  onEdit,
+  onDuplicate,
+  onDownload,
+  onDelete,
+  formatRelativeDate,
+}: CVCardProps) {
+  return (
+    <TooltipProvider>
+      <Card className={cn(
+        "transition-all hover:shadow-md",
+        isSelected && "ring-2 ring-primary border-primary"
+      )}>
+        <CardContent className="p-4 md:p-6">
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Checkbox & Icon */}
+            <div className="flex items-start gap-3">
+              <Checkbox 
+                checked={isSelected}
+                onCheckedChange={onSelect}
+                className="mt-1"
+              />
+              <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+                <FileText className="h-6 w-6 text-muted-foreground" />
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-semibold text-lg truncate">{cv.name}</h3>
+                    {cv.template_id && (
+                      <Badge variant="outline" className="text-xs">
+                        Draft
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1 flex-wrap">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3.5 w-3.5" />
+                      Terakhir diubah {formatRelativeDate(cv.updated_at)}
+                    </span>
+                    <span className="hidden md:inline">·</span>
+                    <span className="flex items-center gap-1">
+                      Dibuat pada {format(new Date(cv.created_at), "d MMM yyyy", { locale: localeId })}
+                    </span>
+                  </div>
+                  {cv.headline && (
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        {cv.headline}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center gap-4 md:gap-6 text-center">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Pengunjung</p>
+                    <p className="text-xl font-semibold text-primary">0</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-border/60">
+                <Button size="sm" onClick={onEdit} className="gap-1.5">
+                  <Pencil className="h-3.5 w-3.5" />
+                  Ubah
+                </Button>
+                <Button size="sm" variant="outline" disabled className="gap-1.5">
+                  <Users className="h-3.5 w-3.5" />
+                  Pengunjung
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" variant="outline" className="gap-1.5">
+                      <Download className="h-3.5 w-3.5" />
+                      PDF
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="z-50 bg-popover">
+                    <DropdownMenuItem onClick={() => onDownload(cv, "docx")}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Download DOCX
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled className="text-muted-foreground">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PDF (Segera Hadir)
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button size="sm" variant="outline" onClick={onView} className="gap-1.5">
+                      <Eye className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Lihat</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Lihat CV</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button size="sm" variant="outline" onClick={onDuplicate} className="px-2">
+                      <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Duplikasi CV</TooltipContent>
+                </Tooltip>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="gap-1.5 border-primary/50 text-primary hover:bg-primary/5"
+                  disabled
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Cek CV dengan AI
+                </Button>
+                <div className="flex-1" />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button size="sm" variant="ghost" className="px-2" disabled>
+                      <Settings className="h-3.5 w-3.5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Pengaturan</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      className="px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={onDelete}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Hapus CV</TooltipContent>
+                </Tooltip>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   );
 }
