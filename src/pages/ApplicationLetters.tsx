@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
+import { id as localeId } from "date-fns/locale";
 import {
   Search,
   Filter,
   Plus,
-  ArrowUpDown,
   Eye,
   Pencil,
   Copy,
@@ -16,7 +16,13 @@ import {
   ChevronsLeft,
   ChevronsRight,
   FileText,
-  MoreVertical,
+  Building2,
+  Calendar,
+  MapPin,
+  GraduationCap,
+  Globe,
+  Mail,
+  Phone,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -24,14 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -45,9 +44,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
@@ -66,21 +62,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ApplicationLetterFilterModal, FilterValues } from "@/components/application-letters/ApplicationLetterFilterModal";
-import { ApplicationLetterColumnToggle, ColumnVisibility, defaultColumnVisibility } from "@/components/application-letters/ApplicationLetterColumnToggle";
 import { mockApplicationLetters } from "@/data/mockApplicationLetters";
 import {
   ApplicationLetter,
   Language,
-  LANGUAGE_OPTIONS,
   GENDER_OPTIONS,
   MARITAL_STATUS_OPTIONS,
 } from "@/types/applicationLetter";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-
-const getLanguageBadgeVariant = (language: Language) => {
-  return language === "id" ? "default" : "secondary";
-};
 
 type SortField = "application_date" | "company_name" | "subject";
 type SortOrder = "asc" | "desc";
@@ -90,7 +80,6 @@ export default function ApplicationLetters() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filters, setFilters] = useState<FilterValues>({});
-  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>(defaultColumnVisibility);
   const [sortField, setSortField] = useState<SortField | null>("application_date");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [letters, setLetters] = useState<ApplicationLetter[]>(mockApplicationLetters);
@@ -102,15 +91,6 @@ export default function ApplicationLetters() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortOrder("asc");
-    }
-  };
 
   const filteredAndSortedLetters = useMemo(() => {
     let result = [...letters];
@@ -211,44 +191,39 @@ export default function ApplicationLetters() {
     toast.success("Surat lamaran berhasil diduplikasi");
   };
 
-  const handleDownload = (letter: ApplicationLetter, format: "docx" | "pdf") => {
-    if (format === "pdf") {
+  const handleDownload = (letter: ApplicationLetter, formatType: "docx" | "pdf") => {
+    if (formatType === "pdf") {
       toast.info("Fitur export PDF akan segera hadir");
       return;
     }
-    // In real implementation, call API to generate and download file
-    toast.success(`Mengunduh surat lamaran dalam format ${format.toUpperCase()}`);
+    toast.success(`Mengunduh surat lamaran dalam format ${formatType.toUpperCase()}`);
   };
 
-  const getLabel = (value: string, options: { value: string; label: string }[]) => {
-    return options.find((opt) => opt.value === value)?.label || value;
+  const formatRelativeDate = (dateString: string) => {
+    return formatDistanceToNow(new Date(dateString), {
+      addSuffix: true,
+      locale: localeId,
+    });
   };
-
-  const SortableHeader = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="-ml-3 h-8 data-[state=open]:bg-accent uppercase text-xs font-medium tracking-wide text-muted-foreground hover:text-foreground"
-      onClick={() => handleSort(field)}
-    >
-      {children}
-      <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 opacity-50" />
-    </Button>
-  );
 
   return (
     <DashboardLayout>
       <PageHeader
         title="Surat Lamaran"
         subtitle="Kelola surat lamaran kerja Anda."
-      />
+      >
+        <Button size="sm" onClick={() => navigate("/application-letters/create")}>
+          <Plus className="h-4 w-4 mr-2" />
+          Buat Surat Lamaran
+        </Button>
+      </PageHeader>
 
       {/* Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div className="relative w-full md:w-auto md:min-w-[300px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Cari nama, perusahaan, subjek, email..."
+            placeholder="Cari subjek, perusahaan, email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -270,263 +245,123 @@ export default function ApplicationLetters() {
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
-          <ApplicationLetterColumnToggle visibility={columnVisibility} onVisibilityChange={setColumnVisibility} />
-          <Button size="sm" onClick={() => navigate("/application-letters/create")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Buat Surat Lamaran
-          </Button>
+          {paginatedLetters.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Checkbox 
+                id="selectAll"
+                checked={paginatedLetters.length > 0 && selectedIds.length === paginatedLetters.length}
+                onCheckedChange={handleSelectAll}
+              />
+              <label htmlFor="selectAll" className="text-sm text-muted-foreground cursor-pointer">
+                Pilih Semua
+              </label>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-card border border-border/60 rounded-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <TooltipProvider>
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[40px]">
-                    <Checkbox 
-                      checked={paginatedLetters.length > 0 && selectedIds.length === paginatedLetters.length}
-                      onCheckedChange={handleSelectAll}
-                    />
-                  </TableHead>
-                  {columnVisibility.subject && (
-                    <TableHead><SortableHeader field="subject">Subjek</SortableHeader></TableHead>
-                  )}
-                  {columnVisibility.company_name && (
-                    <TableHead><SortableHeader field="company_name">Perusahaan</SortableHeader></TableHead>
-                  )}
-                  {columnVisibility.application_date && (
-                    <TableHead><SortableHeader field="application_date">Tanggal</SortableHeader></TableHead>
-                  )}
-                  {columnVisibility.language && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Bahasa</TableHead>
-                  )}
-                  {columnVisibility.name && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Nama Pelamar</TableHead>
-                  )}
-                  {columnVisibility.email && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Email</TableHead>
-                  )}
-                  {columnVisibility.phone && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">No. Telepon</TableHead>
-                  )}
-                  {columnVisibility.applicant_city && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Kota Pelamar</TableHead>
-                  )}
-                  {columnVisibility.company_city && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Kota Perusahaan</TableHead>
-                  )}
-                  {columnVisibility.education && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Pendidikan</TableHead>
-                  )}
-                  {columnVisibility.marital_status && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Status Pernikahan</TableHead>
-                  )}
-                  {columnVisibility.gender && (
-                    <TableHead className="uppercase text-xs font-medium tracking-wide">Gender</TableHead>
-                  )}
-                  <TableHead className="w-[60px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedLetters.length === 0 ? (
-                  <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={14} className="text-center py-16 text-muted-foreground">
-                      <div className="flex flex-col items-center gap-2">
-                        <FileText className="h-10 w-10 text-muted-foreground/50" />
-                        <p className="text-base font-medium">Tidak ada surat lamaran</p>
-                        <p className="text-sm">Mulai buat surat lamaran pertama Anda</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  paginatedLetters.map((letter, index) => (
-                    <TableRow 
-                      key={letter.id}
-                      className={cn(
-                        index % 2 === 0 ? "bg-background" : "bg-muted/20",
-                        selectedIds.includes(letter.id) && "bg-primary/5"
-                      )}
-                    >
-                      <TableCell>
-                        <Checkbox 
-                          checked={selectedIds.includes(letter.id)}
-                          onCheckedChange={() => handleSelectOne(letter.id)}
-                        />
-                      </TableCell>
-                      {columnVisibility.subject && (
-                        <TableCell className="max-w-[200px]">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <span className="block truncate font-medium">{letter.subject}</span>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{letter.subject}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TableCell>
-                      )}
-                      {columnVisibility.company_name && (
-                        <TableCell>{letter.company_name}</TableCell>
-                      )}
-                      {columnVisibility.application_date && (
-                        <TableCell className="text-muted-foreground">
-                          {format(new Date(letter.application_date), "dd MMM yyyy")}
-                        </TableCell>
-                      )}
-                      {columnVisibility.language && (
-                        <TableCell>
-                          <Badge variant={getLanguageBadgeVariant(letter.language)}>
-                            {letter.language === "id" ? "ID" : "EN"}
-                          </Badge>
-                        </TableCell>
-                      )}
-                      {columnVisibility.name && (
-                        <TableCell>{letter.name}</TableCell>
-                      )}
-                      {columnVisibility.email && (
-                        <TableCell>{letter.email}</TableCell>
-                      )}
-                      {columnVisibility.phone && (
-                        <TableCell>{letter.phone}</TableCell>
-                      )}
-                      {columnVisibility.applicant_city && (
-                        <TableCell>{letter.applicant_city}</TableCell>
-                      )}
-                      {columnVisibility.company_city && (
-                        <TableCell>{letter.company_city}</TableCell>
-                      )}
-                      {columnVisibility.education && (
-                        <TableCell>{letter.education}</TableCell>
-                      )}
-                      {columnVisibility.marital_status && (
-                        <TableCell>{getLabel(letter.marital_status, MARITAL_STATUS_OPTIONS)}</TableCell>
-                      )}
-                      {columnVisibility.gender && (
-                        <TableCell>{getLabel(letter.gender, GENDER_OPTIONS)}</TableCell>
-                      )}
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="secondary" size="icon" className="h-8 w-8">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="z-50 bg-popover">
-                            <DropdownMenuItem onClick={() => navigate(`/application-letters/${letter.id}`)}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              Lihat
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate(`/application-letters/${letter.id}/edit`)}>
-                              <Pencil className="h-4 w-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDuplicate(letter)}>
-                              <Copy className="h-4 w-4 mr-2" />
-                              Duplikasi
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleDownload(letter, "docx")}>
-                              <Download className="h-4 w-4 mr-2" />
-                              Download Docx
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              disabled
-                              className="text-muted-foreground"
-                            >
-                              <Download className="h-4 w-4 mr-2" />
-                              Download PDF (Segera Hadir)
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem 
-                              onClick={() => handleDelete(letter.id)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Hapus
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TooltipProvider>
-        </div>
-
-        {/* Pagination */}
-        {filteredAndSortedLetters.length > 0 && (
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-4 py-4 border-t border-border/60">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Tampilkan</span>
-              <Select
-                value={String(perPage)}
-                onValueChange={(value) => {
-                  setPerPage(Number(value));
-                  setCurrentPage(1);
-                }}
-              >
-                <SelectTrigger className="w-[70px] h-8">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="z-50 bg-popover">
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-              <span>dari {filteredAndSortedLetters.length} data</span>
-            </div>
-
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage(1)}
-                disabled={currentPage === 1}
-              >
-                <ChevronsLeft className="h-4 w-4" />
+      {/* Letter Cards */}
+      <div className="space-y-4">
+        {paginatedLetters.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                <FileText className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Tidak ada surat lamaran</h3>
+              <p className="text-muted-foreground text-sm mb-4">Mulai buat surat lamaran pertama Anda</p>
+              <Button onClick={() => navigate("/application-letters/create")}>
+                <Plus className="h-4 w-4 mr-2" />
+                Buat Surat Lamaran
               </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="px-3 text-sm">
-                Halaman {currentPage} dari {totalPages || 1}
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages || totalPages === 0}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage === totalPages || totalPages === 0}
-              >
-                <ChevronsRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
+        ) : (
+          paginatedLetters.map((letter) => (
+            <LetterCard
+              key={letter.id}
+              letter={letter}
+              isSelected={selectedIds.includes(letter.id)}
+              onSelect={() => handleSelectOne(letter.id)}
+              onView={() => navigate(`/application-letters/${letter.id}`)}
+              onEdit={() => navigate(`/application-letters/${letter.id}/edit`)}
+              onDuplicate={() => handleDuplicate(letter)}
+              onDownload={handleDownload}
+              onDelete={() => handleDelete(letter.id)}
+              formatRelativeDate={formatRelativeDate}
+            />
+          ))
         )}
       </div>
+
+      {/* Pagination */}
+      {filteredAndSortedLetters.length > 0 && (
+        <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4 p-4 bg-card border border-border/60 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Tampilkan</span>
+            <Select
+              value={String(perPage)}
+              onValueChange={(value) => {
+                setPerPage(Number(value));
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[70px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="z-50 bg-popover">
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+            <span>dari {filteredAndSortedLetters.length} data</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="px-3 text-sm">
+              Halaman {currentPage} dari {totalPages || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages || totalPages === 0}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Filter Modal */}
       <ApplicationLetterFilterModal
@@ -572,5 +407,205 @@ export default function ApplicationLetters() {
         </AlertDialogContent>
       </AlertDialog>
     </DashboardLayout>
+  );
+}
+
+// Letter Card Component
+interface LetterCardProps {
+  letter: ApplicationLetter;
+  isSelected: boolean;
+  onSelect: () => void;
+  onView: () => void;
+  onEdit: () => void;
+  onDuplicate: () => void;
+  onDownload: (letter: ApplicationLetter, format: "docx" | "pdf") => void;
+  onDelete: () => void;
+  formatRelativeDate: (date: string) => string;
+}
+
+function LetterCard({
+  letter,
+  isSelected,
+  onSelect,
+  onView,
+  onEdit,
+  onDuplicate,
+  onDownload,
+  onDelete,
+  formatRelativeDate,
+}: LetterCardProps) {
+  const getLabel = (value: string, options: { value: string; label: string }[]) => {
+    return options.find((opt) => opt.value === value)?.label || value;
+  };
+
+  return (
+    <TooltipProvider>
+      <Card className={cn(
+        "transition-all hover:shadow-md",
+        isSelected && "ring-2 ring-primary border-primary"
+      )}>
+        <CardContent className="p-4 md:p-5">
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
+              <div className="flex-1 min-w-0">
+                {/* Subject */}
+                <h3 className="font-semibold text-base md:text-lg line-clamp-1">
+                  {letter.subject}
+                </h3>
+                
+                {/* Company & Location */}
+                <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground flex-wrap">
+                  <span className="flex items-center gap-1">
+                    <Building2 className="h-3.5 w-3.5" />
+                    {letter.company_name}
+                  </span>
+                  <span className="hidden sm:inline">·</span>
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {letter.company_city}
+                  </span>
+                </div>
+              </div>
+
+              {/* Badges */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Badge variant={letter.language === "id" ? "default" : "secondary"} className="text-xs">
+                  <Globe className="h-3 w-3 mr-1" />
+                  {letter.language === "id" ? "Indonesia" : "English"}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Info Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              {/* Application Date */}
+              <div className="flex items-center gap-2 p-2.5 rounded-md bg-muted/50">
+                <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Calendar className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground">Tanggal Lamaran</p>
+                  <p className="text-sm font-medium truncate">
+                    {format(new Date(letter.application_date), "d MMM yyyy", { locale: localeId })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Education */}
+              <div className="flex items-center gap-2 p-2.5 rounded-md bg-muted/50">
+                <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <GraduationCap className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground">Pendidikan</p>
+                  <p className="text-sm font-medium truncate">{letter.education || "-"}</p>
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="flex items-center gap-2 p-2.5 rounded-md bg-muted/50">
+                <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Mail className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground">Email</p>
+                  <p className="text-sm font-medium truncate">{letter.email}</p>
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div className="flex items-center gap-2 p-2.5 rounded-md bg-muted/50">
+                <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Phone className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground">Telepon</p>
+                  <p className="text-sm font-medium truncate">{letter.phone}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Info Badges */}
+            <div className="flex items-center gap-2 flex-wrap mb-4">
+              <Badge variant="outline" className="text-xs">
+                {getLabel(letter.gender, GENDER_OPTIONS)}
+              </Badge>
+              <Badge variant="outline" className="text-xs">
+                {getLabel(letter.marital_status, MARITAL_STATUS_OPTIONS)}
+              </Badge>
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {letter.applicant_city}
+              </span>
+              <span className="text-xs text-muted-foreground ml-auto">
+                Diperbarui {formatRelativeDate(letter.updated_at)}
+              </span>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-border/60">
+              <Button size="sm" onClick={onEdit} className="gap-1.5">
+                <Pencil className="h-3.5 w-3.5" />
+                Ubah
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="outline" className="gap-1.5">
+                    <Download className="h-3.5 w-3.5" />
+                    Unduh
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="z-50 bg-popover">
+                  <DropdownMenuItem onClick={() => onDownload(letter, "docx")}>
+                    <Download className="h-4 w-4 mr-2" />
+                    Download DOCX
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled className="text-muted-foreground">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PDF (Segera Hadir)
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="sm" variant="outline" onClick={onView} className="gap-1.5">
+                    <Eye className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Lihat</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Lihat Surat</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="sm" variant="outline" onClick={onDuplicate} className="px-2">
+                    <Copy className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Duplikasi Surat</TooltipContent>
+              </Tooltip>
+              <div className="flex-1" />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    className="px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={onDelete}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Hapus Surat</TooltipContent>
+              </Tooltip>
+              <Checkbox 
+                checked={isSelected}
+                onCheckedChange={onSelect}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   );
 }
