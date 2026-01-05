@@ -73,17 +73,26 @@ export interface Organization {
   description: string;
 }
 
+export interface CVTemplate {
+  id: string;
+  name: string;
+  path: string;
+  type: string;
+}
+
 export interface CV {
   id: string;
   user_id: string;
   template_id?: string;
+  template?: CVTemplate;
+  language?: string;
   name: string;
   headline: string;
   email: string;
   phone: string;
   address: string;
   about: string;
-  photo: string;
+  photo: string | null;
   created_at: string;
   updated_at: string;
   educations: Education[];
