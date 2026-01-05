@@ -478,15 +478,6 @@ function CVCard({
         isSelected && "ring-2 ring-primary border-primary"
       )}>
         <CardContent className="p-4 md:p-5">
-          <div className="flex gap-3">
-            {/* Checkbox */}
-            <div className="flex-shrink-0 pt-1">
-              <Checkbox 
-                checked={isSelected}
-                onCheckedChange={onSelect}
-              />
-            </div>
-
             {/* Content */}
             <div className="flex-1 min-w-0">
               {/* Header Row */}
@@ -646,9 +637,12 @@ function CVCard({
                   </TooltipTrigger>
                   <TooltipContent>Hapus CV</TooltipContent>
                 </Tooltip>
+                <Checkbox 
+                  checked={isSelected}
+                  onCheckedChange={onSelect}
+                />
               </div>
             </div>
-          </div>
         </CardContent>
       </Card>
     </TooltipProvider>
